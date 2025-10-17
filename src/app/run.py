@@ -11,6 +11,7 @@ from OpenGL.GL import *
 from OpenGL import *
 from util import config
 from images import image
+from gfx import draw, texture
 import event_handler
 
 def MainLoop(rotation_x, rotation_y, zoom):
@@ -27,9 +28,16 @@ def MainLoop(rotation_x, rotation_y, zoom):
     glRotatef(rotation_x, 1, 0, 0)  
     glRotatef(rotation_y, 0, 1, 0)
 
+    #Earth texture loading
+    # Place the texture loading code here
+    planet_images = image.create_images()
+    image.load_images(planet_images) # loads textures from the planet images
+
     # Draw the textured sphere
+    earth_texture = planet_images["Earth"].texture_id
     glBindTexture(GL_TEXTURE_2D, earth_texture)
-    draw_sphere(earth_texture)
+    draw_obj = draw()
+    draw_obj.draw_sphere(earth_texture)
 
     pygame.display.flip()
     pygame.time.wait(10)
@@ -58,11 +66,6 @@ def setup():
     glEnable(GL_TEXTURE_2D)
     glEnable(GL_COLOR_MATERIAL)
     
-    #Earth texture loading
-    # Place the texture loading code here
-    planet_images = image.create_images()
-    earth_texture = load_texture(planet_images["Earth"].f_path)
-    
     #Hide cursor 
     pygame.mouse.set_visible(CURSOR_VISIBILITY)
         
@@ -71,4 +74,6 @@ def setup():
 
 def run():
     setup()
-    MainLoop()
+    rotation_x, rotation_y = 0
+    zoom = 45.0
+    MainLoop(rotation_x, rotation_y, zoom)
