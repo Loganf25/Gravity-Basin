@@ -7,7 +7,7 @@ Main file for gravity basin
 @author: cassa
 """
 
-from app import run
+from app.run import run
 
 if __name__ == "__main__":
-    run.run()
+    run()

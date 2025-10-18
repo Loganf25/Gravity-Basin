@@ -10,7 +10,7 @@ Created on Thu Oct 16 15:25:19 2025
 import os
 from util import config
 from gfx import texture
-import planet
+from app import planet
 
 class image:
     name = None
@@ -30,6 +30,6 @@ def create_images(planets):
 
 # loads in the textures for all planet images in the folder
 def load_images(planet_images):
-    for imag in planet_images.items():
-        texture_obj = texture(imag.f_path)
-        imag.texture_id = texture_obj.load_texture()
+    for imag in planet_images.values():
+        texture_obj = texture(imag[1].f_path)
+        imag[1].texture_id = texture_obj.load_texture()

@@ -10,6 +10,7 @@ Created on Thu Oct 16 15:47:48 2025
 import pygame
 from OpenGL.GL import *
 from OpenGL import *
+from util import config
 
 class EventHandler:
     zoom = 0
@@ -17,11 +18,12 @@ class EventHandler:
     def __init__(self, zoom):
         self.zoom = zoom
 
-    def __quit_program():
+    def __quit_program(self):
         pygame.quit()
+        config.RUN_FLAG = False
         return
     
-    def __zoom():
+    def __zoom(self):
         if event.button == 4: #Scroll up
             self.zoom += 0.5
         if event.button == 5: #Scroll down
@@ -46,7 +48,7 @@ class EventHandler:
         #Move back to view the sphere
         glTranslatef(0.0, 0.0, -10)
     
-    def __handle_mouse():
+    def __handle_mouse(self):
         if pygame.mouse.get_pressed()[0]:
             #Get relative mouse movement
             mouse_motion_x, mouse_motion_y = event.rel
@@ -60,7 +62,7 @@ class EventHandler:
             if rotation_y < -90: rotation_y = -90
 
     
-    def handle_event(event):
+    def handle_event(self, event):
         type_ = event.type
         
         if type_ == pygame.QUIT:

@@ -12,35 +12,37 @@ from OpenGL import *
 from util import config
 from images import image
 from gfx import draw, texture
-import event_handler
+from app import event_handler
 
 def MainLoop(rotation_x, rotation_y, zoom):
     # Main loop
-    while True:
+    while config.RUN_FLAG:
         for event in pygame.event.get():
             eventHandler = event_handler.EventHandler(zoom)
+            print(event)
             eventHandler.handle_event(event)
                     
-    #Clear screen and depth buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
-    #Apply rotations based on mouse movement
-    glRotatef(rotation_x, 1, 0, 0)  
-    glRotatef(rotation_y, 0, 1, 0)
-
-    #Earth texture loading
-    # Place the texture loading code here
-    planet_images = image.create_images(config.SUPPORTED_PLANETS)
-    image.load_images(planet_images) # loads textures from the planet images
-
-    # Draw the textured sphere
-    earth_texture = planet_images["Earth"].texture_id
-    glBindTexture(GL_TEXTURE_2D, earth_texture)
-    draw_obj = draw()
-    draw_obj.draw_sphere(earth_texture)
-
-    pygame.display.flip()
-    pygame.time.wait(10)
+        #Clear screen and depth buffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    
+        #Apply rotations based on mouse movement
+        glRotatef(rotation_x, 1, 0, 0)  
+        glRotatef(rotation_y, 0, 1, 0)
+    
+        #Earth texture loading
+        # Place the texture loading code here
+        planet_images = image.create_images(config.SUPPORTED_PLANETS)
+        #TODO: Add menu functionality here
+        image.load_images(planet_images) # loads textures from the planet images
+    
+        # Draw the textured spherefv
+        earth_texture = planet_images["Earth"].texture_id
+        glBindTexture(GL_TEXTURE_2D, earth_texture)
+        draw_obj = draw()
+        draw_obj.draw_sphere(earth_texture)
+    
+        pygame.display.flip()
+        pygame.time.wait(10)
 
 
 
@@ -67,13 +69,14 @@ def setup():
     glEnable(GL_COLOR_MATERIAL)
     
     #Hide cursor 
-    pygame.mouse.set_visible(CURSOR_VISIBILITY)
+    pygame.mouse.set_visible(config.CURSOR_VISIBILITY)
         
     #Lock cursor to window
-    pygame.event.set_grab(CURSOR_LOCK)
+    pygame.event.set_grab(config.CURSOR_LOCK)
 
 def run():
     setup()
-    rotation_x, rotation_y = 0
+    rotation_x = 0
+    rotation_y = 0
     zoom = 45.0
     MainLoop(rotation_x, rotation_y, zoom)

@@ -27,7 +27,7 @@ TITLE = "GRAVITY BASIN"
 DISPLAY_SIZE = (800, 600)
 SCALE = (0.5, 0.5, 0.5)
 TRANSLATE = (0.0, 0.0, -50)
-SUPPORTED_PLANETS = [planet("Earth")]
+SUPPORTED_PLANETS = [planet.Planet("Earth")]
 
 
 
@@ -38,4 +38,4 @@ SUPPORTED_PLANETS = [planet("Earth")]
 FLAGS = pygame.DOUBLEBUF | pygame.OPENGL
 CURSOR_VISIBILITY = True
 CURSOR_LOCK = False
-
+RUN_FLAG = True
