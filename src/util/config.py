@@ -10,6 +10,7 @@ import os
 import pygame
 from OpenGL.GL import *
 from OpenGL import *
+from app import planet
 
 """
                             PATHS
@@ -26,6 +27,7 @@ TITLE = "GRAVITY BASIN"
 DISPLAY_SIZE = (800, 600)
 SCALE = (0.5, 0.5, 0.5)
 TRANSLATE = (0.0, 0.0, -50)
+SUPPORTED_PLANETS = [planet("Earth")]
 
 
 

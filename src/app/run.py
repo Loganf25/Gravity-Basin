@@ -30,7 +30,7 @@ def MainLoop(rotation_x, rotation_y, zoom):
 
     #Earth texture loading
     # Place the texture loading code here
-    planet_images = image.create_images()
+    planet_images = image.create_images(config.SUPPORTED_PLANETS)
     image.load_images(planet_images) # loads textures from the planet images
 
     # Draw the textured sphere

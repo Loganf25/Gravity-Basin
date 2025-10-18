@@ -10,6 +10,7 @@ Created on Thu Oct 16 15:25:19 2025
 import os
 from util import config
 from gfx import texture
+import planet
 
 class image:
     name = None
@@ -17,15 +18,14 @@ class image:
     texture_id = None
     
     def __init__(self, name):
-        self.name = name
+        self.name = name.lower()
         self.f_path = os.path.join(config.IMAGE_FOLDER, name + '.jpg')
 
 # create list that has all the planetary images in it
-def create_images():
-                        # jpg files should follow this convention (lowercase)
-    planet_images = {"Earth": image("earth"),
-                     "Moon": image("moon"),
-                     "Jupiter": image("jupiter")}
+def create_images(planets):
+    planet_images = {}
+    for planet_ in planets:
+        planet_images.setdefault(planet_.name, image(planet_.name))
     return (planet_images)
 
 # loads in the textures for all planet images in the folder
