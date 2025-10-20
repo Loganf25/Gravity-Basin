@@ -29,16 +29,15 @@ def MainLoop(rotation_x, rotation_y, zoom):
         glRotatef(rotation_x, 1, 0, 0)  
         glRotatef(rotation_y, 0, 1, 0)
     
-        #Earth texture loading
-        # Place the texture loading code here
+        #Load all planet image textures
         planet_images = image.create_images(config.SUPPORTED_PLANETS)
         #TODO: Add menu functionality here
-        image.load_images(planet_images) # loads textures from the planet images
+        image.load_images(planet_images)
     
         # Draw the textured spherefv
-        earth_texture = planet_images["Earth"].texture_id
+        earth_texture = planet_images["earth"].texture_id
         glBindTexture(GL_TEXTURE_2D, earth_texture)
-        draw_obj = draw()
+        draw_obj = draw.Draw()
         draw_obj.draw_sphere(earth_texture)
     
         pygame.display.flip()

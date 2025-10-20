@@ -8,7 +8,7 @@ Created on Fri Oct 17 12:39:17 2025
 import pygame
 from OpenGL.GL import *
 
-class texture():
+class Texture():
     fname = None
     texture_id = None
     def __init__(self, fname):

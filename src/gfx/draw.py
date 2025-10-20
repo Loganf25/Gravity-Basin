@@ -11,13 +11,13 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-class draw:    
-    def __init__(self):
+class Draw:    
+    def __init__(self): # this is needed for class but class has no variables
         self=self
     
-    def draw_sphere(self):
+    def draw_sphere(self, texture_id):
         glPushMatrix()
-        glBindTexture(GL_TEXTURE_2D, self.texture_id)
+        glBindTexture(GL_TEXTURE_2D, texture_id)
     
         #Create sphere object
         #A quadric object is used to define properties for rendering quadric shapes (spheres, cylinders, etc.)

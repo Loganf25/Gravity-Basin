@@ -20,6 +20,16 @@ class image:
     def __init__(self, name):
         self.name = name.lower()
         self.f_path = os.path.join(config.IMAGE_FOLDER, name + '.jpg')
+        
+    def get_f_path(self):
+        return self.f_path
+    def get_texture_id(self):
+        return self.texture_id
+    def get_name(self):
+        return self.name
+    
+    def set_texture_id(self, texture_id):
+        self.texture_id = texture_id
 
 # create list that has all the planetary images in it
 def create_images(planets):
@@ -31,5 +41,5 @@ def create_images(planets):
 # loads in the textures for all planet images in the folder
 def load_images(planet_images):
     for imag in planet_images.values():
-        texture_obj = texture(imag[1].f_path)
-        imag[1].texture_id = texture_obj.load_texture()
+        texture_obj = texture.Texture(imag.get_f_path())
+        imag.texture_id = texture_obj.load_texture()
