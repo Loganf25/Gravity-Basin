@@ -9,21 +9,26 @@ Created on Thu Oct 16 15:47:48 2025
 
 import pygame
 from OpenGL.GL import *
+from OpenGL.GLU import *
 from OpenGL import *
 from util import config
 
 class EventHandler:
-    zoom = 0
+    zoom = 45.0
+    rotation_x = 0.0
+    rotation_y = 0.0
     
     def __init__(self, zoom):
-        self.zoom = zoom
+        self.zoom = float(zoom)
+        self.rotation_x = 0.0
+        self.rotation_y = 0.0
 
     def __quit_program(self):
         pygame.quit()
         config.RUN_FLAG = False
         return
     
-    def __zoom(self):
+    def __zoom(self, event):
         if event.button == 4: #Scroll up
             self.zoom += 0.5
         if event.button == 5: #Scroll down
@@ -33,42 +38,31 @@ class EventHandler:
         if self.zoom < 10: zoom = 10
         if self.zoom > 1000: zoom = 100
     
-        #Update projection matrix with new zoom level
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluPerspective(self.zoom, (display[0]/display[1]), 0.1, 50.0)
     
-        #Reset model view matrix
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-    
-        #Apply scale
-        glScalef(0.5, 0.5, 0.5)
-    
-        #Move back to view the sphere
-        glTranslatef(0.0, 0.0, -10)
-    
-    def __handle_mouse(self):
+    def __handle_mouse(self, event):
+        if event.type != pygame.MOUSEMOTION:
+            return
         if pygame.mouse.get_pressed()[0]:
             #Get relative mouse movement
             mouse_motion_x, mouse_motion_y = event.rel
     
             #Update rotation angles based on mouse movement
-            rotation_x += mouse_motion_y * 0.01
-            rotation_y += mouse_motion_x * 0.01
+            sensitivity = 0.2
+            self.rotation_x += mouse_motion_y * sensitivity
+            self.rotation_y += mouse_motion_x * sensitivity
     
             #Clamp vertical rotation to avoid flipping
-            if rotation_y > 90: rotation_y = 90
-            if rotation_y < -90: rotation_y = -90
+            if self.rotation_y > 90: self.rotation_y = 90
+            if self.rotation_y < -90: self.rotation_y = -90
 
     
     def handle_event(self, event):
         type_ = event.type
         
         if type_ == pygame.QUIT:
-           __quit_program() 
+           self.__quit_program() 
         elif type_ == pygame.MOUSEBUTTONDOWN:
-            __zoom()
+            self.__zoom(event)
         elif type_ == pygame.MOUSEMOTION:
-            __handle_mouse()
+            self.__handle_mouse(event)
             

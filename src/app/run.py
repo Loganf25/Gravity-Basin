@@ -8,6 +8,7 @@ Created on Thu Oct 16 15:22:12 2025
 
 import pygame
 from OpenGL.GL import *
+from OpenGL.GLU import *
 from OpenGL import *
 from util import config
 from images import image
@@ -15,19 +16,40 @@ from gfx import draw, texture
 from app import event_handler
 
 def MainLoop(rotation_x, rotation_y, zoom):
+    eventHandler = event_handler.EventHandler(zoom)
+
     # Main loop
     while config.RUN_FLAG:
         for event in pygame.event.get():
-            eventHandler = event_handler.EventHandler(zoom)
             print(event)
             eventHandler.handle_event(event)
                     
         #Clear screen and depth buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+        #Update projection matrix with new zoom level
+        #Changed for more robust
+        surface = pygame.display.get_surface()
+        if surface:
+            display = surface.get_size()
+            glViewport(0, 0, display[0], display[1])
+            glMatrixMode(GL_PROJECTION)
+            glLoadIdentity()
+            gluPerspective(eventHandler.zoom, (display[0]/display[1]), 0.1, 50.0)
+    
+        #Reset model view matrix
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+
+        #Apply scale
+        glScalef(0.5, 0.5, 0.5)
+    
+        #Move back to view the sphere
+        glTranslatef(0.0, 0.0, -10)
     
         #Apply rotations based on mouse movement
-        glRotatef(rotation_x, 1, 0, 0)  
-        glRotatef(rotation_y, 0, 1, 0)
+        glRotatef(eventHandler.rotation_y, 0, 1, 0)  
+        glRotatef(eventHandler.rotation_x, 1, 0, 0)
     
         #Load all planet image textures
         planet_images = image.create_images(config.SUPPORTED_PLANETS)

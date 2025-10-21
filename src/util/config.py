@@ -16,9 +16,9 @@ from app import planet
                             PATHS
 """
 # getcwd() bc this script is called from main and main is located where all subfolders are
-IMAGE_FOLDER = os.path.join(os.getcwd(), "images/")
-UTIL_FOLDER = os.path.join(os.getcwd(), "util/")
-APP_FOLDER = os.path.join(os.getcwd(), "app/")
+IMAGE_FOLDER = os.path.join(os.getcwd(), "src\\images\\")
+UTIL_FOLDER = os.path.join(os.getcwd(), "src\\util\\")
+APP_FOLDER = os.path.join(os.getcwd(), "src\\app\\")
 
 """
                             CONSTANTS
