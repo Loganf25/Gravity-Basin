@@ -1,49 +1,72 @@
 ├── 📁 assets/
 │   ├── 📁 images/
-│   │   ├── earth.jpg
-│   └── 📁 audio/
-|       
+│   │   ├── 🌑 mercury.jpg
+│   │   ├── 🌕 venus.jpg
+│   │   ├── 🌍 earth.jpg
+│   │   ├── 🔴 mars.jpg
+│   │   ├── 🪐 jupiter.jpg
+│   │   ├── 🌀 saturn.jpg
+│   │   ├── 🌀 uranus.jpg
+│   │   ├── 🌀 neptune.jpg
+│   │   └── ❄️ pluto.jpg
+│
 ├── 📁 src/
-│   ├── 🐍 __init__.py   # These files mark folders as packages (Like Java, and allows src.core.engine import Engine)
+│   ├── 🐍 __init__.py
 │   │
 │   ├── 📁 core/
 │   │   ├── 🐍 __init__.py
-│   │   ├── 🐍 engine.py         # Main simulation loop, PyGame/OpenGL setup will be here!
-│   │   ├── 🐍 time_manager.py   # Manages simulation time, delta time, speed, pausing...anything time
-│   │   └── 🐍 input_handler.py  # Processes PyGame events (mouse/keyboard).
+│   │   ├── 🐍 engine.py          ✅ implemented
+│   │   │                           - sets up PyGame (window only)
+│   │   │                           - configures OpenGL viewport
+│   │   │                           - manages app states: menu ↔ simulation
+│   │   │                           - main update/render loop
+│   │   │
+│   │   ├── 🐍 time_manager.py    🕓 placeholder (frame timing, delta-time control)
+│   │   └── 🐍 input_handler.py   ✅ implemented
+│   │                               - processes PyGame mouse/keyboard/quit events
 │   │
 │   ├── 📁 simulation/
 │   │   ├── 🐍 __init__.py
 │   │   ├── 📁 models/
 │   │   │   ├── 🐍 __init__.py
-│   │   │   ├── 🐍 celestial_body.py # Base class (position, mass, velocity).
-│   │   │   ├── 🐍 planet.py         # Extends Celestial_Body.
-│   │   │   └── 🐍 star.py           # Extends Celestial_Body.
+│   │   │   ├── 🐍 celestial_body.py  🕓 not implemented yet
+│   │   │   ├── 🐍 planet.py          🕓 placeholder for planet subclass
+│   │   │   └── 🐍 star.py            🕓 placeholder for star subclass
 │   │   │
 │   │   ├── 📁 services/
 │   │   │   ├── 🐍 __init__.py
-│   │   │   ├── 🐍 physics_service.py # Gravitational calculations, updates positions.
-│   │   │   └── 🐍 orbit_service.py   # Logic for calculating and drawing orbital paths. (I'd like to use NASA's Horizon's API for real time orbits)
+│   │   │   ├── 🐍 physics_service.py 🕓 planned: gravitational & motion updates
+│   │   │   └── 🐍 orbit_service.py   🕓 planned: orbital path logic (NASA Horizons later)
 │   │   │
-│   │   └── 📁 data/                    #Basically our repo
+│   │   └── 📁 data/
 │   │       ├── 🐍 __init__.py
-│   │       └── 🐍 simulation_data.py # Python dictionary/list with planet data.
+│   │       └── 🐍 simulation_data.py 🕓 placeholder for static solar system data
 │   │
 │   ├── 📁 graphics/
 │   │   ├── 🐍 __init__.py
-│   │   ├── 🐍 camera.py           # Manages the OpenGL view and projection matrices.
-│   │   ├── 🐍 renderer.py         # Contains functions for drawing objects with OpenGL.
-│   │   ├── 🐍 texture_loader.py   # Utility to load images into OpenGL textures.
-│   │   └── 🐍 primitives.py       # Functions to create primitive shapes (e.g., a sphere).
+│   │   ├── 🐍 camera.py          🕓 planned: manage OpenGL projection/view matrices
+│   │   ├── 🐍 renderer.py        🕓 planned: encapsulate all OpenGL draw calls
+│   │   ├── 🐍 texture_loader.py  🕓 planned: load JPG textures into OpenGL
+│   │   └── 🐍 primitives.py      🕓 planned: sphere, orbit rings, etc.
 │   │
 │   ├── 📁 ui/
 │   │   ├── 🐍 __init__.py
-│   │   ├── 🐍 main_menu.py
-│   │   └── 🐍 hud.py
+│   │   ├── 🐍 main_menu.py       ✅ fully functional
+│   │   │                           - OpenGL-only rendering
+│   │   │                           - draw_text() + draw_button() utilities
+│   │   │                           - text alignment support
+│   │   │                           - transitions to simulation screen
+│   │   │
+│   │   └── 🐍 hud.py             ✅ fully functional
+│   │                               - OpenGL-only rendering
+│   │                               - same utilities as menu
+│   │                               - “Return to Menu” button working
 │   │
-│   └── 🐍 main.py                 # Entry point of the game.
+│   └── 🐍 main.py                ✅ entry point
+│                                   - initializes Engine
+│                                   - starts main loop
 │
-└── 🐍 requirements.txt            # Lists dependencies (pygame, pyopengl, numpy) for documention.
+└── 🐍 requirements.txt           ✅ lists pygame, pyopengl, numpy
 
 
 Icons for Additions
