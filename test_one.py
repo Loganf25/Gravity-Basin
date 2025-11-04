@@ -79,7 +79,7 @@ def main():
 
     #Earth texture loading
     # Place the texture loading code here
-    earth_texture = load_texture("earth.jpg")
+    earth_texture = load_texture("assets/images/earth.jpg")
 
     #Enable mouse look variables
     global rotation_x, rotation_y, zoom

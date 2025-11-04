@@ -6,12 +6,7 @@ class SimulationScreen:
     """Heads-up display for the simulation screen with return to menu button."""
     def __init__(self, engine):
         self.engine = engine
-<<<<<<< HEAD
         self.button_rect = (540, 20, 200, 60)
-=======
-        self.button_rect = (50, 80, 160, 50)
-        glutInit()
->>>>>>> bf9c5fffab07fe02644c4d29abbcd9a5866c1c99
 
     def update(self, input_handler):
         """Update HUD state based on input."""

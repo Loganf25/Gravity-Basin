@@ -12,8 +12,9 @@ from src.graphics.texture_loader import TextureLoader
 from src.simulation.services.physics_service import PhysicsService
 from src.simulation.data.simulation_data import planet_textures, PLANET_DATA
 from src.simulation.models.planet import Planet
-from src.simulation.models.star import Star
+#from src.simulation.models.star import Star
 from src.graphics.camera import Camera
+
 
 AU_VISUAL_SCALE = 8.0
 RADIUS_VISUAL_SCALE = 0.01
@@ -21,10 +22,9 @@ RADIUS_VISUAL_SCALE = 0.01
 class Engine:
     """Core engine to run the Universe Simulator application."""
     def __init__(self):
-        
         pygame.init()
-        glut.glutInit()
         pygame.display.set_mode((1280, 720), pygame.OPENGL | pygame.DOUBLEBUF)
+        glut.glutInit()
         pygame.display.set_caption("Universe Simulator")
 
         self.clock = pygame.time.Clock()

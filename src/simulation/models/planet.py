@@ -28,3 +28,39 @@ class Planet(CelestialBody):
         # placeholder for OpenGL draw calls (sphere with texture)
 
     #Setters and Getters
+    def change_name(self, name):
+        """Change the name of the planet."""
+        self.name = name
+    def get_name(self):
+        """Get the name of the planet."""
+        return self.name
+    def change_mass(self, mass):
+        """Change the mass of the planet."""
+        self.mass = mass
+    def get_mass(self):
+        """Get the mass of the planet."""
+        return self.mass
+    def change_radius(self, radius):
+        """Change the radius of the planet."""
+        self.radius = radius
+    def get_radius(self):
+        """Get the radius of the planet."""
+        return self.radius
+    def change_distance(self, distance):
+        """Change the distance of the planet."""
+        self.distance = distance
+    def get_distance(self):
+        """Get the distance of the planet."""
+        return self.distance
+    def change_color(self, color):
+        """Change the color of the planet."""
+        self.color = color
+    def get_color(self):
+        """Get the color of the planet."""
+        return self.color
+    def change_texture(self, texture):
+        """Change the texture of the planet."""
+        self.texture = texture
+    def get_texture(self):
+        """Get the texture of the planet."""
+        return self.texture

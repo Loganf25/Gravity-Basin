@@ -6,12 +6,7 @@ class MainMenu:
     """Main menu screen with start button."""
     def __init__(self, engine):
         self.engine = engine
-<<<<<<< HEAD
         self.button_rect = (540, 300, 200, 80)
-=======
-        self.button_rect = (50, 300, 200, 80)
-        glutInit()
->>>>>>> bf9c5fffab07fe02644c4d29abbcd9a5866c1c99
 
     def update(self, input_handler):
         """Update menu state based on input."""
