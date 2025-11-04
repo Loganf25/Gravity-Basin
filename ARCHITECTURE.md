@@ -9,58 +9,70 @@
 │   │   ├── 🌀 uranus.jpg
 │   │   ├── 🌀 neptune.jpg
 │   │   └── ❄️ pluto.jpg
+|   |   └──  sun.jpg  #currently doesent exist right now
 │
 ├── 📁 src/
 │   ├── 🐍 __init__.py
 │   │
 │   ├── 📁 core/
 │   │   ├── 🐍 __init__.py
-│   │   ├── 🐍 engine.py          ✅ implemented
-│   │   │                           - sets up PyGame (window only)
-│   │   │                           - configures OpenGL viewport
-│   │   │                           - manages app states: menu ↔ simulation
+│   │   ├── 🐍 engine.py          ✅ fully implemented
+│   │   │                           - initializes pygame (window only)
+│   │   │                           - configures OpenGL perspective
+│   │   │                           - manages app states (menu ↔ simulation)
+│   │   │                           - integrates physics + renderer systems
 │   │   │                           - main update/render loop
 │   │   │
-│   │   ├── 🐍 time_manager.py    🕓 placeholder (frame timing, delta-time control)
+│   │   ├── 🐍 time_manager.py    🕓 placeholder (frame timing / delta time)
 │   │   └── 🐍 input_handler.py   ✅ implemented
-│   │                               - processes PyGame mouse/keyboard/quit events
+│   │                               - processes pygame keyboard/mouse/quit
 │   │
 │   ├── 📁 simulation/
 │   │   ├── 🐍 __init__.py
 │   │   ├── 📁 models/
 │   │   │   ├── 🐍 __init__.py
-│   │   │   ├── 🐍 celestial_body.py  🕓 not implemented yet
-│   │   │   ├── 🐍 planet.py          🕓 placeholder for planet subclass
-│   │   │   └── 🐍 star.py            🕓 placeholder for star subclass
+│   │   │   ├── 🐍 celestial_body.py  ✅ implemented (base body: pos, vel, mass)
+│   │   │   ├── 🐍 planet.py          ✅ implemented (planet subclass)
+│   │   │   └── 🐍 star.py            ✅ implemented (star subclass)
 │   │   │
 │   │   ├── 📁 services/
 │   │   │   ├── 🐍 __init__.py
-│   │   │   ├── 🐍 physics_service.py 🕓 planned: gravitational & motion updates
-│   │   │   └── 🐍 orbit_service.py   🕓 planned: orbital path logic (NASA Horizons later)
+│   │   │   ├── 🐍 physics_service.py ✅ fully implemented
+│   │   │   │                           - gravitational calculations
+│   │   │   │                           - integration over time
+│   │   │   │                           - start/pause/toggle/reset control
+│   │   │   │                           - time scaling support
+│   │   │   └── 🐍 orbit_service.py   🕓 placeholder (for orbital path logic)
 │   │   │
 │   │   └── 📁 data/
 │   │       ├── 🐍 __init__.py
-│   │       └── 🐍 simulation_data.py 🕓 placeholder for static solar system data
+│   │       └── 🐍 simulation_data.py ✅ implemented
+│   │                                   - provides texture file paths for planets
 │   │
 │   ├── 📁 graphics/
 │   │   ├── 🐍 __init__.py
-│   │   ├── 🐍 camera.py          🕓 planned: manage OpenGL projection/view matrices
-│   │   ├── 🐍 renderer.py        🕓 planned: encapsulate all OpenGL draw calls
-│   │   ├── 🐍 texture_loader.py  🕓 planned: load JPG textures into OpenGL
-│   │   └── 🐍 primitives.py      🕓 planned: sphere, orbit rings, etc.
+│   │   ├── 🐍 camera.py          ✅ implemented (view/zoom/pan control)
+│   │   ├── 🐍 renderer.py        ✅ fully implemented
+│   │   │                           - OpenGL-only rendering
+│   │   │                           - draws planets as textured spheres
+│   │   │                           - handles basic lighting setup
+│   │   │
+│   │   ├── 🐍 texture_loader.py  ✅ implemented
+│   │   │                           - loads .jpg images into OpenGL textures
+│   │   │
+│   │   └── 🐍 primitives.py      🕓 planned (custom geometry helpers)
 │   │
 │   ├── 📁 ui/
 │   │   ├── 🐍 __init__.py
 │   │   ├── 🐍 main_menu.py       ✅ fully functional
-│   │   │                           - OpenGL-only rendering
+│   │   │                           - OpenGL-based text & buttons
 │   │   │                           - draw_text() + draw_button() utilities
-│   │   │                           - text alignment support
-│   │   │                           - transitions to simulation screen
+│   │   │                           - transitions to simulation
 │   │   │
 │   │   └── 🐍 hud.py             ✅ fully functional
-│   │                               - OpenGL-only rendering
-│   │                               - same utilities as menu
-│   │                               - “Return to Menu” button working
+│   │                               - OpenGL-based overlay for simulation
+│   │                               - draw_text() + draw_button() utilities
+│   │                               - return-to-menu button
 │   │
 │   └── 🐍 main.py                ✅ entry point
 │                                   - initializes Engine
@@ -68,6 +80,10 @@
 │
 └── 🐍 requirements.txt           ✅ lists pygame, pyopengl, numpy
 
+current issues : 
+planets not scaled properly,
+sun is missing,
+something is wrong with venus.
 
 Icons for Additions
 🐍  - Python Script

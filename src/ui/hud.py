@@ -27,7 +27,6 @@ class SimulationScreen:
         bx, by, bw, bh = self.button_rect
         self.draw_button(bx, by, bw, bh, 1.0, 0.8, 0.2)
         self.draw_text("Return to Menu", bx + bw/2, by + bh/2 + 10, 0.0, 0.0, 0.0, align="center")
-        self.draw_text("Simulation Running...", 640, 350, 0.7, 0.9, 1.0, align="center")
 
     def draw_button(self, x, y, w, h, r, g, b):
         current_color = glGetFloatv(GL_CURRENT_COLOR)

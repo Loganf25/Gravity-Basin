@@ -21,13 +21,35 @@ class MainMenu:
                 self.engine.change_state("simulation")
 
     def render(self):
-        glClearColor(0.0, 0.0, 0.05, 1)
+        # clear the previous frame
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
 
+        # switch to orthographic projection
+        glMatrixMode(GL_PROJECTION)
+        glPushMatrix()
+        glLoadIdentity()
+        glOrtho(0, 1280, 720, 0, -1, 1)  # match window coords
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+
+        # disable depth test so buttons draw on top
+        glDisable(GL_DEPTH_TEST)
+        glDisable(GL_LIGHTING)
+
+        # draw the menu
         bx, by, bw, bh = self.button_rect
         self.draw_button(bx, by, bw, bh, 0.2, 0.6, 1.0)
         self.draw_text("Universe Simulator", 640, 200, 1.0, 1.0, 1.0, align="center")
         self.draw_text("Start Simulation", bx + bw/2, by + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
+
+        # restore previous GL state
+        glEnable(GL_DEPTH_TEST)
+        glMatrixMode(GL_PROJECTION)
+        glPopMatrix()
+        glMatrixMode(GL_MODELVIEW)
+        glPopMatrix()
 
     def draw_button(self, x, y, w, h, r, g, b):
         current_color = glGetFloatv(GL_CURRENT_COLOR)
