@@ -6,7 +6,12 @@ class MainMenu:
     """Main menu screen with start button."""
     def __init__(self, engine):
         self.engine = engine
+<<<<<<< HEAD
         self.button_rect = (540, 300, 200, 80)
+=======
+        self.button_rect = (50, 300, 200, 80)
+        glutInit()
+>>>>>>> bf9c5fffab07fe02644c4d29abbcd9a5866c1c99
 
     def update(self, input_handler):
         """Update menu state based on input."""
@@ -42,8 +47,16 @@ class MainMenu:
         # draw the menu
         bx, by, bw, bh = self.button_rect
         self.draw_button(bx, by, bw, bh, 0.2, 0.6, 1.0)
-        self.draw_text("Universe Simulator", 640, 200, 1.0, 1.0, 1.0, align="center")
+        self.draw_text("Universe Simulator", 150, 200, 1.0, 1.0, 1.0, align="center")
         self.draw_text("Start Simulation", bx + bw/2, by + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
+
+        #draw a few more dummy buttons
+        self.draw_button(bx, by+80, bw, bh, 0.2, 0.6, 1.0)
+        self.draw_text("dummy button 1", bx + bw/2, by + 80 + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
+        self.draw_button(bx, by+160, bw, bh, 0.2, 0.6, 1.0)
+        self.draw_text("dummy button 2", bx + bw/2, by + 160 + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
+        self.draw_button(bx, by+240, bw, bh, 0.2, 0.6, 1.0)
+        self.draw_text("dummy button 3", bx + bw/2, by + 240 + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
 
         # restore previous GL state
         gl.glEnable(gl.GL_DEPTH_TEST)

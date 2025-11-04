@@ -6,7 +6,12 @@ class SimulationScreen:
     """Heads-up display for the simulation screen with return to menu button."""
     def __init__(self, engine):
         self.engine = engine
+<<<<<<< HEAD
         self.button_rect = (540, 20, 200, 60)
+=======
+        self.button_rect = (50, 80, 160, 50)
+        glutInit()
+>>>>>>> bf9c5fffab07fe02644c4d29abbcd9a5866c1c99
 
     def update(self, input_handler):
         """Update HUD state based on input."""
@@ -28,6 +33,16 @@ class SimulationScreen:
         bx, by, bw, bh = self.button_rect
         self.draw_button(bx, by, bw, bh, 1.0, 0.8, 0.2)
         self.draw_text("Return to Menu", bx + bw/2, by + bh/2 + 10, 0.0, 0.0, 0.0, align="center")
+
+        #place in ui elements approximate positions
+        self.draw_button_text("[time controls]",50, 10, 250, 50, 1.0, 0.8, 0.2)
+        self.draw_button_text("[planet controls]",50, 600, 700, 70, 1.0, 0.8, 0.2)
+        self.draw_button_text("[object menu]",1000, 10, 260, 700, 1.0, 0.8, 0.2)
+
+    def draw_button_text(self, text, x, y, w, h, r, g, b):
+        self.draw_button(x,y,w,h, r,g,b)
+        self.draw_text(text, x + w/2, y + h/2 + 10, 0,0,0, align="center")
+
 
     def draw_button(self, x, y, w, h, r, g, b):
         """Draw a colored rectangle button."""
