@@ -1,5 +1,5 @@
 """Core module to run the Universe Simulator application."""
-from src.core.engine import Engine
+from core.engine import Engine
 
 def main():
     """Entry point for the Universe Simulator application."""

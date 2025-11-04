@@ -4,16 +4,16 @@ import OpenGL.GL as gl
 import OpenGL.GLU as glu
 import OpenGL.GLUT as glut
 
-from src.core.input_handler import InputHandler
-from src.ui.main_menu import MainMenu
-from src.ui.hud import SimulationScreen
-from src.graphics.renderer import Renderer
-from src.graphics.texture_loader import TextureLoader
-from src.simulation.services.physics_service import PhysicsService
-from src.simulation.data.simulation_data import planet_textures, PLANET_DATA
-from src.simulation.models.planet import Planet
+from core.input_handler import InputHandler
+from ui.main_menu import MainMenu
+from ui.hud import SimulationScreen
+from graphics.renderer import Renderer
+from graphics.texture_loader import TextureLoader
+from simulation.services.physics_service import PhysicsService
+from simulation.data.simulation_data import planet_textures, PLANET_DATA
+from simulation.models.planet import Planet
 #from src.simulation.models.star import Star
-from src.graphics.camera import Camera
+from graphics.camera import Camera
 
 
 AU_VISUAL_SCALE = 8.0

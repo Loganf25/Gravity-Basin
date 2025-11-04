@@ -1,7 +1,7 @@
 """defines the Planet class extending CelestialBody"""
 
-from src.simulation.data.simulation_data import get_planet_data
-from src.simulation.models.celestial_body import CelestialBody
+from simulation.data.simulation_data import get_planet_data
+from simulation.models.celestial_body import CelestialBody
 
 class Planet(CelestialBody):
     """Class representing a planet in the simulation, extending CelestialBody."""
