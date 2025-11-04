@@ -12,7 +12,7 @@ from graphics.texture_loader import TextureLoader
 from simulation.services.physics_service import PhysicsService
 from simulation.data.simulation_data import planet_textures, PLANET_DATA
 from simulation.models.planet import Planet
-#from src.simulation.models.star import Star
+from simulation.models.star import Star
 from graphics.camera import Camera
 
 
