@@ -16,6 +16,7 @@ PLANET_DATA = [
 
 
 planet_textures = {
+    "sun": "assets/images/sun.jpg",
     "mercury": "assets/images/mercury.jpg",
     "venus": "assets/images/venus.jpg",
     "earth": "assets/images/earth.jpg",
