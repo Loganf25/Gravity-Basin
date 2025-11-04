@@ -1,8 +1,9 @@
-# camera.py
-from OpenGL.GLU import gluLookAt
+"""module for camera control in a 3D OpenGL environment"""
 import math
+from OpenGL.GLU import gluLookAt
 
 class Camera:
+    """Dynamic camera for orbiting and zooming around a target point."""
     def __init__(self):
         self.distance = 25.0       # initial zoom distance
         self.azimuth = 45.0
@@ -17,6 +18,7 @@ class Camera:
         self._last_mouse = None
 
     def handle_input(self, input_handler):
+        """Update camera position based on input handler state."""
         # zoom with multiplicative factor
         if input_handler.mouse_wheel_delta != 0:
             if input_handler.mouse_wheel_delta > 0:  # scroll up -> zoom in
@@ -46,6 +48,7 @@ class Camera:
             self._last_mouse = None
 
     def apply(self):
+        """Apply the camera transformation using gluLookAt."""
         az = math.radians(self.azimuth)
         el = math.radians(self.elevation)
 

@@ -1,15 +1,15 @@
-from OpenGL.GL import *
-from OpenGL.GLUT import (
-    glutInit, glutBitmapCharacter, glutBitmapWidth, GLUT_BITMAP_HELVETICA_18
-)
+"""Main menu UI module for the Universe Simulator application."""
+import OpenGL.GL as gl
+import OpenGL.GLUT as glut
 
 class MainMenu:
+    """Main menu screen with start button."""
     def __init__(self, engine):
         self.engine = engine
         self.button_rect = (540, 300, 200, 80)
-        glutInit()
 
     def update(self, input_handler):
+        """Update menu state based on input."""
         if input_handler.quit_requested:
             self.engine.running = False
             return
@@ -21,22 +21,23 @@ class MainMenu:
                 self.engine.change_state("simulation")
 
     def render(self):
+        """Render the main menu."""
         # clear the previous frame
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glLoadIdentity()
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+        gl.glLoadIdentity()
 
         # switch to orthographic projection
-        glMatrixMode(GL_PROJECTION)
-        glPushMatrix()
-        glLoadIdentity()
-        glOrtho(0, 1280, 720, 0, -1, 1)  # match window coords
-        glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        glLoadIdentity()
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glPushMatrix()
+        gl.glLoadIdentity()
+        gl.glOrtho(0, 1280, 720, 0, -1, 1)  # match window coords
+        gl.glMatrixMode(gl.GL_MODELVIEW)
+        gl.glPushMatrix()
+        gl.glLoadIdentity()
 
         # disable depth test so buttons draw on top
-        glDisable(GL_DEPTH_TEST)
-        glDisable(GL_LIGHTING)
+        gl.glDisable(gl.GL_DEPTH_TEST)
+        gl.glDisable(gl.GL_LIGHTING)
 
         # draw the menu
         bx, by, bw, bh = self.button_rect
@@ -45,37 +46,39 @@ class MainMenu:
         self.draw_text("Start Simulation", bx + bw/2, by + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
 
         # restore previous GL state
-        glEnable(GL_DEPTH_TEST)
-        glMatrixMode(GL_PROJECTION)
-        glPopMatrix()
-        glMatrixMode(GL_MODELVIEW)
-        glPopMatrix()
+        gl.glEnable(gl.GL_DEPTH_TEST)
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glPopMatrix()
+        gl.glMatrixMode(gl.GL_MODELVIEW)
+        gl.glPopMatrix()
 
     def draw_button(self, x, y, w, h, r, g, b):
-        current_color = glGetFloatv(GL_CURRENT_COLOR)
-        glColor3f(r, g, b)
-        glBegin(GL_QUADS)
-        glVertex2f(x, y)
-        glVertex2f(x + w, y)
-        glVertex2f(x + w, y + h)
-        glVertex2f(x, y + h)
-        glEnd()
-        glColor3f(*current_color[:3])
+        """Draw a colored rectangle button."""
+        current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR)
+        gl.glColor3f(r, g, b)
+        gl.glBegin(gl.GL_QUADS)
+        gl.glVertex2f(x, y)
+        gl.glVertex2f(x + w, y)
+        gl.glVertex2f(x + w, y + h)
+        gl.glVertex2f(x, y + h)
+        gl.glEnd()
+        gl.glColor3f(*current_color[:3])
 
     def draw_text(self, text, x, y, r, g, b, align="left"):
-        current_color = glGetFloatv(GL_CURRENT_COLOR)
-        glColor3f(r, g, b)
+        """Draw text at specified position with color and alignment."""
+        current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR)
+        gl.glColor3f(r, g, b)
 
-        width = sum(glutBitmapWidth(GLUT_BITMAP_HELVETICA_18, ord(ch)) for ch in text)
+        width = sum(glut.glutBitmapWidth(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) for ch in text)
 
         if align == "center":
             x -= width / 2.0
         elif align == "right":
             x -= width
 
-        glRasterPos2f(x, y)
+        gl.glRasterPos2f(x, y)
 
         for ch in text:
-            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ord(ch))
+            glut.glutBitmapCharacter(glut.GLUT_BITMAP_HELVETICA_18, ord(ch))
 
-        glColor3f(*current_color[:3])
+        gl.glColor3f(*current_color[:3])

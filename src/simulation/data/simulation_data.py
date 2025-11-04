@@ -1,7 +1,5 @@
-
-# simulation_data.py
-# contains basic information for all solar system bodies
-# distances in AU (astronomical units), mass in kg, radius in km
+"""contains basic information for all solar system bodies"""
+#distances in AU (astronomical units), mass in kg, radius in km
 
 PLANET_DATA = [
     {"name": "Sun",     "mass": 1.9885e30, "radius": 0.46,    "distance_from_sun": 0.0,   "texture": "sun.jpg",     "color": (1.0, 1.0, 0.0)},

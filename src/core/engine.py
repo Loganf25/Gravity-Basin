@@ -1,25 +1,29 @@
-
+"""Core engine module for the Universe Simulator application."""
 import pygame
-from OpenGL.GL import *
-from OpenGL.GLU import *
+import OpenGL.GL as gl
+import OpenGL.GLU as glu
+import OpenGL.GLUT as glut
 
-from core.input_handler import InputHandler
-from ui.main_menu import MainMenu
-from ui.hud import SimulationScreen
-from graphics.renderer import Renderer
-from graphics.texture_loader import TextureLoader
-from simulation.services.physics_service import PhysicsService
-from simulation.data.simulation_data import planet_textures, PLANET_DATA
-from simulation.models.planet import Planet
-from simulation.models.star import Star
-from graphics.camera import Camera
+from src.core.input_handler import InputHandler
+from src.ui.main_menu import MainMenu
+from src.ui.hud import SimulationScreen
+from src.graphics.renderer import Renderer
+from src.graphics.texture_loader import TextureLoader
+from src.simulation.services.physics_service import PhysicsService
+from src.simulation.data.simulation_data import planet_textures, PLANET_DATA
+from src.simulation.models.planet import Planet
+from src.simulation.models.star import Star
+from src.graphics.camera import Camera
 
 AU_VISUAL_SCALE = 8.0
 RADIUS_VISUAL_SCALE = 0.01
 
 class Engine:
+    """Core engine to run the Universe Simulator application."""
     def __init__(self):
+        
         pygame.init()
+        glut.glutInit()
         pygame.display.set_mode((1280, 720), pygame.OPENGL | pygame.DOUBLEBUF)
         pygame.display.set_caption("Universe Simulator")
 
@@ -41,15 +45,16 @@ class Engine:
         self.setup_opengl()
 
     def setup_opengl(self):
-        glEnable(GL_DEPTH_TEST)
-        glDepthFunc(GL_LEQUAL)
-        glViewport(0, 0, 1280, 720)
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluPerspective(60, 1280/720, 0.1, 1000.0)
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-        glClearColor(0.0, 0.0, 0.0, 1.0)
+        """Setup basic OpenGL state."""
+        gl.glEnable(gl.GL_DEPTH_TEST)
+        gl.glDepthFunc(gl.GL_LEQUAL)
+        gl.glViewport(0, 0, 1280, 720)
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glLoadIdentity()
+        glu.gluPerspective(60, 1280/720, 0.1, 1000.0)
+        gl.glMatrixMode(gl.GL_MODELVIEW)
+        gl.glLoadIdentity()
+        gl.glClearColor(0.0, 0.0, 0.0, 1.0)
 
     def populate_scene(self):
         """Create Sun and planets, scale for visualization, and register with PhysicsService."""
@@ -57,7 +62,7 @@ class Engine:
         for pdata in PLANET_DATA:
             try:
                 p = Planet(pdata["name"])
-            except Exception:
+            except (ValueError, AttributeError):
                 class _P: pass
                 p = _P()
                 p.name = pdata["name"]
@@ -78,29 +83,27 @@ class Engine:
 
             self.physics_service.register_body(p)
 
-
-
-
-
     def render_ui_overlay(self, draw_fn):
-        glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        glMatrixMode(GL_PROJECTION)
-        glPushMatrix()
-        glLoadIdentity()
-        glOrtho(0, 1280, 720, 0, -1, 1)
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-        glDisable(GL_DEPTH_TEST)
-        glDisable(GL_LIGHTING)
+        """Render a UI overlay by switching to orthographic projection."""
+        gl.glMatrixMode(gl.GL_MODELVIEW)
+        gl.glPushMatrix()
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glPushMatrix()
+        gl.glLoadIdentity()
+        gl.glOrtho(0, 1280, 720, 0, -1, 1)
+        gl.glMatrixMode(gl.GL_MODELVIEW)
+        gl.glLoadIdentity()
+        gl.glDisable(gl.GL_DEPTH_TEST)
+        gl.glDisable(gl.GL_LIGHTING)
         draw_fn()
-        glEnable(GL_DEPTH_TEST)
-        glMatrixMode(GL_PROJECTION)
-        glPopMatrix()
-        glMatrixMode(GL_MODELVIEW)
-        glPopMatrix()
+        gl.glEnable(gl.GL_DEPTH_TEST)
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glPopMatrix()
+        gl.glMatrixMode(gl.GL_MODELVIEW)
+        gl.glPopMatrix()
 
     def run(self):
+        """Main loop of the engine."""
         while self.running:
             self.input_handler.process_events()
 
@@ -128,5 +131,6 @@ class Engine:
         pygame.quit()
 
     def change_state(self, new_state):
+        """Change the current state of the engine."""
         if new_state in ["menu", "simulation"]:
             self.state = new_state

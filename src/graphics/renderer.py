@@ -1,14 +1,16 @@
-from OpenGL.GL import *
-from OpenGL.GLU import *
-import math
+"""module for rendering planets using OpenGL"""
+import OpenGL.GL as gl
+import OpenGL.GLU as glu
 
 class Renderer:
+    """Renders planets using OpenGL with textures."""
     def __init__(self, texture_loader):
         self.texture_loader = texture_loader
         self.planet_textures = {}
         self.initialized = False
 
     def initialize_textures(self, planet_data):
+        """Load all planet textures using the provided texture loader."""
         if self.initialized:
             return
         for name, texture_path in planet_data.items():
@@ -17,39 +19,42 @@ class Renderer:
         self.initialized = True
 
     def setup_lighting(self):
-        glEnable(GL_LIGHTING)
-        glEnable(GL_LIGHT0)
-        glLightfv(GL_LIGHT0, GL_POSITION,  (0.0, 0.0, 0.0, 1.0))
-        glLightfv(GL_LIGHT0, GL_DIFFUSE,   (1.0, 1.0, 1.0, 1.0))
-        glLightfv(GL_LIGHT0, GL_SPECULAR,  (1.0, 1.0, 1.0, 1.0))
-        glEnable(GL_COLOR_MATERIAL)
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE)
+        """Setup basic lighting for the scene."""
+        gl.glEnable(gl.GL_LIGHTING)
+        gl.glEnable(gl.GL_LIGHT0)
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION,  (0.0, 0.0, 0.0, 1.0))
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE,   (1.0, 1.0, 1.0, 1.0))
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR,  (1.0, 1.0, 1.0, 1.0))
+        gl.glEnable(gl.GL_COLOR_MATERIAL)
+        gl.glColorMaterial(gl.GL_FRONT_AND_BACK, gl.GL_AMBIENT_AND_DIFFUSE)
 
     def draw_sphere(self, radius, slices=32, stacks=32):
-        quad = gluNewQuadric()
-        gluQuadricTexture(quad, GL_TRUE)
-        gluSphere(quad, radius, slices, stacks)
-        gluDeleteQuadric(quad)
+        """Draw a textured sphere."""
+        quad = glu.gluNewQuadric()
+        glu.gluQuadricTexture(quad, gl.GL_TRUE)
+        glu.gluSphere(quad, radius, slices, stacks)
+        glu.gluDeleteQuadric(quad)
 
     def draw_planet(self, planet):
+        """Draw a planet with its texture."""
         name = planet.name.lower()
         if name not in self.planet_textures:
             return
 
-        glPushMatrix()
-        glTranslatef(*planet.position)
-        glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, self.planet_textures[name])
-        glRotatef(planet.rotation_angle, 0.0, 1.0, 0.0)
-        glColor3f(1.0, 1.0, 1.0)
+        gl.glPushMatrix()
+        gl.glTranslatef(*planet.position)
+        gl.glEnable(gl.GL_TEXTURE_2D)
+        gl.glBindTexture(gl.GL_TEXTURE_2D, self.planet_textures[name])
+        gl.glRotatef(planet.rotation_angle, 0.0, 1.0, 0.0)
+        gl.glColor3f(1.0, 1.0, 1.0)
         self.draw_sphere(planet.radius)
-        glDisable(GL_TEXTURE_2D)
-        glPopMatrix()
+        gl.glDisable(gl.GL_TEXTURE_2D)
+        gl.glPopMatrix()
 
     def render(self, physics_service, camera):
         """Render all planets from the camera's viewpoint."""
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glLoadIdentity()
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+        gl.glLoadIdentity()
 
         # apply dynamic camera
         camera.apply()

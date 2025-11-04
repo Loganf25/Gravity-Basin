@@ -1,7 +1,8 @@
-
+"""Input handling module for the Universe Simulator application."""
 import pygame
 
 class InputHandler:
+    """Handles user input events such as mouse movements, clicks, and wheel scrolling."""
     def __init__(self):
         # mouse
         self.mouse_pos = (0, 0)
@@ -18,6 +19,7 @@ class InputHandler:
         self.quit_requested = False
 
     def process_events(self):
+        """Process all pending pygame events and update input states."""
         # reset one-frame flags
         self.mouse_pressed = False
         self.mouse_wheel_up = False

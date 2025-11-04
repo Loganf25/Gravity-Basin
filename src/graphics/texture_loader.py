@@ -1,14 +1,16 @@
-
-from OpenGL.GL import *
-import pygame
-import ctypes
+""""module for loading and managing textures using OpenGL and Pygame"""
 import os
+import ctypes
+import pygame
+import OpenGL.GL as gl
 
 class TextureLoader:
+    """Loads and manages textures using OpenGL and Pygame"""
     def __init__(self):
         self.textures = {}
 
     def load_texture(self, file_path):
+        """Load a texture from file and return its OpenGL texture ID"""
         if file_path in self.textures:
             return self.textures[file_path]
 
@@ -25,18 +27,18 @@ class TextureLoader:
         #safe contiguous buffer for OpenGL
         buf = (ctypes.c_ubyte * len(image_data)).from_buffer_copy(image_data)
 
-        texture_id = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D, texture_id)
+        texture_id = gl.glGenTextures(1)
+        gl.glBindTexture(gl.GL_TEXTURE_2D, texture_id)
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT)
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_REPEAT)
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR)
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR)
 
-        gl_format = GL_RGBA if image_format == "RGBA" else GL_RGB
-        glTexImage2D(GL_TEXTURE_2D, 0, gl_format, width, height, 0, gl_format, GL_UNSIGNED_BYTE, buf)
+        gl_format = gl.GL_RGBA if image_format == "RGBA" else gl.GL_RGB
+        gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl_format, width, height, 0, gl_format, gl.GL_UNSIGNED_BYTE, buf)
 
-        glBindTexture(GL_TEXTURE_2D, 0)
+        gl.glBindTexture(gl.GL_TEXTURE_2D, 0)
         self.textures[file_path] = texture_id
         return texture_id
 
@@ -47,6 +49,6 @@ class TextureLoader:
             try:
                 tex_id = self.load_texture(path)
                 print(f"Loaded {planet}: {path} (ID={tex_id})")
-            except Exception as e:
+            except (FileNotFoundError, IOError) as e:
                 print(f"Failed to load {planet} texture: {e}")
         print("All textures initialized successfully.")

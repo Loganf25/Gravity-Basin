@@ -1,12 +1,10 @@
+"""defines the Planet class extending CelestialBody"""
 
-# planet.py
-# defines the Planet class extending CelestialBody
-# imports base data (mass, radius, texture, etc.) from simulation_data
-
-from simulation.data.simulation_data import get_planet_data
-from simulation.models.celestial_body import CelestialBody
+from src.simulation.data.simulation_data import get_planet_data
+from src.simulation.models.celestial_body import CelestialBody
 
 class Planet(CelestialBody):
+    """Class representing a planet in the simulation, extending CelestialBody."""
     def __init__(self, name):
         data = get_planet_data(name)
         if data is None:
@@ -22,9 +20,11 @@ class Planet(CelestialBody):
         )
 
     def update(self, delta_time):
+        """Update planet state"""
         # placeholder for motion/orbit updates
-        pass
 
     def render(self):
+        """Render the planet"""
         # placeholder for OpenGL draw calls (sphere with texture)
-        pass
+
+    #Setters and Getters

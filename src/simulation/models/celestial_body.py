@@ -1,8 +1,7 @@
-
-# celestial_body.py
-# base class for all astronomical bodies
+"""base class for all astronomical bodies"""
 
 class CelestialBody:
+    """Base class for celestial bodies in the simulation."""
     def __init__(self, name, mass, radius, distance, color, texture):
         self.name = name
         self.mass = mass
@@ -20,13 +19,15 @@ class CelestialBody:
         self.rotation_speed = 5.0  # degrees per second, visual only
 
     def update(self, delta_time):
+        """Update celestial body state"""
         # override in subclass; call tick_rotation for visual spinning
         self.tick_rotation(delta_time)
 
     def tick_rotation(self, delta_time):
+        """Update rotation angle for visual effect."""
         # increment rotation angle for visual effect
         self.rotation_angle = (self.rotation_angle + self.rotation_speed * delta_time) % 360.0
 
     def render(self):
+        """Render the celestial body"""
         # override in subclass
-        pass
