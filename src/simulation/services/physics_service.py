@@ -101,6 +101,9 @@ class PhysicsService:
             body.position[1] += (body.velocity[1] * delta_time) / (AU_IN_METERS * VISUAL_TO_METERS)
             body.position[2] += (body.velocity[2] * delta_time) / (AU_IN_METERS * VISUAL_TO_METERS)
 
+            if hasattr(body, 'trail'):
+                body.trail.append(tuple(body.position))
+
     def update(self):
         """Update the simulation state based on elapsed time."""
         if not self.is_running:

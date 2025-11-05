@@ -61,21 +61,38 @@ class Renderer:
             self.draw_sphere(planet.radius)
         gl.glPopMatrix()
 
-    def draw_orbit(self, radius):
-        """Draw the orbit path as a circle in the XZ plane."""
+    def draw_orbit(self, trail):
+        """Draw the orbit path from a list of points with a fading red effect."""
+        if len(trail) < 2:
+            return
+
         gl.glDisable(gl.GL_LIGHTING)
         gl.glDisable(gl.GL_TEXTURE_2D)
-        gl.glColor3f(0.3, 0.3, 0.3)
-        gl.glBegin(gl.GL_LINE_LOOP)
+        gl.glEnable(gl.GL_BLEND)
+        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
 
-        num_segments = 100
-        for i in range(num_segments):
-            angle = 2 * math.pi * i / num_segments
-            x = radius * math.cos(angle)
-            z = radius * math.sin(angle)
-            gl.glVertex3f(x, 0.0, z)
-
+        # Draw the fading line strip
+        gl.glLineWidth(2.0)
+        gl.glBegin(gl.GL_LINE_STRIP)
+        num_points = len(trail)
+        #Create fading effect
+        for i, point in enumerate(trail):
+            # Alpha fades from 0 (transparent) to 1 (opaque blue) along the trail
+            alpha = (i / (num_points - 1)) ** 2
+            gl.glColor4f(0.227, 0.298, 0.478, alpha) # Fading blue color
+            gl.glVertex3fv(point)
         gl.glEnd()
+
+        # Draw a rounded point at the head of the trail
+        gl.glEnable(gl.GL_POINT_SMOOTH)
+        gl.glPointSize(3.0)
+        gl.glBegin(gl.GL_POINTS)
+        gl.glColor4f(0.227, 0.298, 0.478, 1.0)
+        gl.glVertex3fv(trail[-1])
+        gl.glEnd()
+        gl.glDisable(gl.GL_POINT_SMOOTH)
+
+        gl.glDisable(gl.GL_BLEND)
 
     def render(self, physics_service, camera):
         """Render all planets from the camera's viewpoint."""
@@ -86,9 +103,8 @@ class Renderer:
         camera.apply()
 
         for body in physics_service.bodies:
-            if body.name.lower() != "sun":
-                dist = math.sqrt(body.initial_position[0]**2 + body.initial_position[1]**2 + body.initial_position[2]**2)
-                self.draw_orbit(dist)
+            if hasattr(body, 'trail') and body.name.lower() != "sun":
+                self.draw_orbit(body.trail)
 
         self.setup_lighting()
 

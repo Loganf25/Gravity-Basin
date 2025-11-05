@@ -1,8 +1,10 @@
 """Core engine module for the Universe Simulator application."""
 import pygame
+import math
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
 import OpenGL.GLUT as glut
+from collections import deque
 
 from core.input_handler import InputHandler
 from core.selection_manager import SelectionManager
@@ -11,7 +13,7 @@ from ui.hud import SimulationScreen
 from graphics.renderer import Renderer
 from graphics.texture_loader import TextureLoader
 from simulation.services.orbit_service import OrbitService
-from simulation.services.physics_service import PhysicsService
+from simulation.services.physics_service import PhysicsService, G, AU_IN_METERS
 from simulation.data.simulation_data import planet_textures, PLANET_DATA
 from simulation.models.planet import Planet
 from simulation.models.star import Star
@@ -63,6 +65,8 @@ class Engine:
     def populate_scene(self):
         """Create Sun and planets, scale for visualization, and register with PhysicsService."""
 
+        sun_mass = next((p["mass"] for p in PLANET_DATA if p["name"].lower() == "sun"), None)
+
         for pdata in PLANET_DATA:
             try:
                 p = Planet(pdata["name"])
@@ -76,6 +80,23 @@ class Engine:
                 p.velocity = [0.0, 0.0, 0.0]
                 p.rotation_angle = 0.0
                 p.initial_position = [0.0, 0.0, 0.0]
+
+            # Dynamically calculate trail length to be 75% of the planet's orbit
+            if pdata["name"].lower() != "sun" and sun_mass is not None:
+                # Use Kepler's Third Law to find the orbital period in seconds
+                distance_m = pdata["distance_from_sun"] * AU_IN_METERS
+                orbital_period_s = 2 * math.pi * math.sqrt(distance_m**3 / (G * sun_mass))
+
+                # Calculate how many simulation steps (frames) this period corresponds to
+                sim_time_per_frame = (1 / 60.0) * self.physics_service.time_scale
+                frames_for_full_orbit = orbital_period_s / sim_time_per_frame
+
+                # Set the trail to be 75% of a full orbit, with a minimum length
+                trail_len = int(0.75 * frames_for_full_orbit)
+                p.trail = deque(maxlen=max(50, trail_len)) # min length of 50
+            else:
+                # Sun doesn't have an orbit trail
+                p.trail = deque(maxlen=0)
 
             # position along X-axis
             p.position = [pdata["distance_from_sun"] * AU_VISUAL_SCALE, 0.0, 0.0]
@@ -148,11 +169,11 @@ class Engine:
                 self.render_ui_overlay(lambda: (self.main_menu.update(self.input_handler),
                                                 self.main_menu.render()))
             elif self.state == "simulation":
-                self.physics_service.update()
                 self.handle_sim_input()
                 self.renderer.render(self.physics_service, self.camera)
                 self.render_ui_overlay(lambda: (self.sim_screen.update(self.input_handler),
                                                 self.sim_screen.render()))
+                self.physics_service.update()
 
             pygame.display.flip()
             self.clock.tick(60)
