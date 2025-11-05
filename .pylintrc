@@ -1,0 +1,19 @@
+[MASTER]
+# Add the src directory to the Python path
+init-hook='import sys; sys.path.append("src")'
+
+[MESSAGES CONTROL]
+# Disable specific warnings if needed
+disable=,  E1101   # no-member (fixes pygame member access warnings)
+
+[BASIC]
+# Good variable names
+good-names=i,j,k,ex,Run,_,id
+
+[FORMAT]
+# Maximum line length
+max-line-length=100
+
+[TYPECHECK]
+# List of members which are set dynamically and missed by pylint inference system
+generated-members=pygame.*
