@@ -11,7 +11,7 @@ PLANET_DATA = [
     {"name": "Saturn",  "mass": 5.6834e26, "radius": 0.0387,  "distance_from_sun": 9.58,  "texture": "saturn.jpg",  "color": (1.0, 0.9, 0.7)},
     {"name": "Uranus",  "mass": 8.6810e25, "radius": 0.0168,  "distance_from_sun": 19.22, "texture": "uranus.jpg",  "color": (0.5, 0.8, 1.0)},
     {"name": "Neptune", "mass": 1.02413e26,"radius": 0.0163,  "distance_from_sun": 30.05, "texture": "neptune.jpg", "color": (0.3, 0.5, 1.0)},
-    {"name": "Pluto",   "mass": 1.303e22,  "radius": 0.0008,  "distance_from_sun": 39.48, "texture": "earth.jpg",    "color": (0.8, 0.8, 0.7)}
+    {"name": "Pluto",   "mass": 1.303e22,  "radius": 0.0008,  "distance_from_sun": 39.48, "texture": "pluto.jpg",    "color": (0.8, 0.8, 0.7)}
 ]
 
 
@@ -25,7 +25,7 @@ planet_textures = {
     "saturn": "assets/images/saturn.jpg",
     "uranus": "assets/images/uranus.jpg",
     "neptune": "assets/images/neptune.jpg",
-    "pluto": "assets/images/earth.jpg"
+    "pluto": "assets/images/pluto.jpg"
 }
 
 

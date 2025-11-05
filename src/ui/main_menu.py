@@ -6,7 +6,7 @@ class MainMenu:
     """Main menu screen with start button."""
     def __init__(self, engine):
         self.engine = engine
-        self.button_rect = (540, 300, 200, 80)
+        self.button_rect = (50, 300, 200, 80)
 
     def update(self, input_handler):
         """Update menu state based on input."""
