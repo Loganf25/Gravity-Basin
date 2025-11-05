@@ -29,8 +29,8 @@ class Camera:
             # enforce min/max distance
             self.distance = max(self.min_distance, min(self.max_distance, self.distance))
 
-        # orbit with right button held
-        if input_handler.mouse_right_held:
+        # orbit with left button held
+        if input_handler.mouse_left_held:
             if self._last_mouse is None:
                 self._last_mouse = input_handler.mouse_pos
             else:

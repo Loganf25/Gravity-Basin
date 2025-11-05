@@ -5,6 +5,7 @@ import OpenGL.GLU as glu
 import OpenGL.GLUT as glut
 
 from core.input_handler import InputHandler
+from core.selection_manager import SelectionManager
 from ui.main_menu import MainMenu
 from ui.hud import SimulationScreen
 from graphics.renderer import Renderer
@@ -37,8 +38,9 @@ class Engine:
         self.renderer = Renderer(self.texture_loader)
 
         self.camera = Camera()  # dynamic camera instance
-        self.textures_initialized = False
 
+        self.textures_initialized = False
+        self.selection_manager = SelectionManager()
         self.main_menu = MainMenu(self)
         self.sim_screen = SimulationScreen(self)
 
@@ -102,6 +104,18 @@ class Engine:
         gl.glMatrixMode(gl.GL_MODELVIEW)
         gl.glPopMatrix()
 
+    def handle_sim_input(self):
+        """Handle input specific to the simulation state."""
+        self.camera.handle_input(self.input_handler)
+
+        if self.input_handler.mouse_pressed:
+            self.selection_manager.pick_object(self.input_handler.mouse_pos[0],
+                                               self.input_handler.mouse_pos[1],
+                                               self.physics_service.bodies)
+        if self.selection_manager.selected_body:
+            #Sets the camera target to the selected body, making it the center
+            self.camera.target = self.selection_manager.selected_body.position
+
     def run(self):
         """Main loop of the engine."""
         while self.running:
@@ -120,7 +134,7 @@ class Engine:
                                                 self.main_menu.render()))
             elif self.state == "simulation":
                 self.physics_service.update()
-                self.camera.handle_input(self.input_handler)
+                self.handle_sim_input()
                 self.renderer.render(self.physics_service, self.camera)
                 self.render_ui_overlay(lambda: (self.sim_screen.update(self.input_handler),
                                                 self.sim_screen.render()))

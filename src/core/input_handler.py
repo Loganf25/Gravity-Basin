@@ -1,5 +1,6 @@
 """Input handling module for the Universe Simulator application."""
 import pygame
+from core.selection_manager import SelectionManager
 
 class InputHandler:
     """Handles user input events such as mouse movements, clicks, and wheel scrolling."""
@@ -7,6 +8,7 @@ class InputHandler:
         # mouse
         self.mouse_pos = (0, 0)
         self.mouse_pressed = False        # left click pressed (one-frame)
+        self.mouse_left_held = False      # left mouse button held state
         self.mouse_right_held = False     # right mouse button held state
         self.last_mouse_pos = None
 
@@ -37,6 +39,7 @@ class InputHandler:
                 # left click
                 if event.button == 1:
                     self.mouse_pressed = True
+                    self.mouse_left_held = True
                     self.mouse_pos = event.pos
                 # wheel up/down on older pygame/backends
                 elif event.button == 4:
@@ -51,6 +54,8 @@ class InputHandler:
                     self.mouse_pos = event.pos
 
             elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    self.mouse_left_held = False
                 if event.button == 3:
                     self.mouse_right_held = False
 
