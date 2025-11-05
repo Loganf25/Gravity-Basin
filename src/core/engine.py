@@ -148,7 +148,7 @@ class Engine:
                 self.render_ui_overlay(lambda: (self.main_menu.update(self.input_handler),
                                                 self.main_menu.render()))
             elif self.state == "simulation":
-                #self.physics_service.update()
+                self.physics_service.update()
                 self.handle_sim_input()
                 self.renderer.render(self.physics_service, self.camera)
                 self.render_ui_overlay(lambda: (self.sim_screen.update(self.input_handler),

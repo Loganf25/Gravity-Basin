@@ -21,14 +21,14 @@ class OrbitService:
         dy = body2.position[1] - body1.position[1]
         dz = body2.position[2] - body1.position[2]
 
-        distance = body1.distance  # Use the unscaled distance for physics calculation
+        distance_in_meters = body1.distance * 1.496e11 # AU real distance in meters
         visual_distance = math.sqrt(dx*dx + dy*dy + dz*dz)
 
         if visual_distance == 0:
             return None
 
         # Compute orbital velocity
-        orbital_velocity = math.sqrt(G * body2.mass / distance)
+        orbital_velocity = math.sqrt(G * body2.mass / distance_in_meters)
 
         # Direction vector from body1 to body2
         direction = np.array([dx, dy, dz]) / visual_distance
@@ -42,6 +42,6 @@ class OrbitService:
         body1.velocity = (orbital_velocity * velocity_direction).tolist()
 
         return {
-            "distance": distance,
+            "distance": distance_in_meters,
             "orbital_velocity": orbital_velocity
         }
