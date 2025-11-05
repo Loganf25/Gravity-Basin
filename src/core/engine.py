@@ -10,6 +10,7 @@ from ui.main_menu import MainMenu
 from ui.hud import SimulationScreen
 from graphics.renderer import Renderer
 from graphics.texture_loader import TextureLoader
+from simulation.services.orbit_service import OrbitService
 from simulation.services.physics_service import PhysicsService
 from simulation.data.simulation_data import planet_textures, PLANET_DATA
 from simulation.models.planet import Planet
@@ -18,7 +19,7 @@ from graphics.camera import Camera
 
 
 AU_VISUAL_SCALE = 8.0
-RADIUS_VISUAL_SCALE = 0.01
+RADIUS_VISUAL_SCALE = 0.0001
 
 class Engine:
     """Core engine to run the Universe Simulator application."""
@@ -35,6 +36,7 @@ class Engine:
 
         self.physics_service = PhysicsService()
         self.texture_loader = TextureLoader()
+        self.orbit_service = OrbitService(self.physics_service)
         self.renderer = Renderer(self.texture_loader)
 
         self.camera = Camera()  # dynamic camera instance
@@ -73,17 +75,27 @@ class Engine:
                 p.color = pdata["color"]
                 p.velocity = [0.0, 0.0, 0.0]
                 p.rotation_angle = 0.0
+                p.initial_position = [0.0, 0.0, 0.0]
 
             # position along X-axis
             p.position = [pdata["distance_from_sun"] * AU_VISUAL_SCALE, 0.0, 0.0]
+            p.initial_position = list(p.position)
 
             # visual radius
             if pdata["name"].lower() == "sun":
-                p.radius = max(1.0, pdata["radius"] * RADIUS_VISUAL_SCALE * 10.0)
+                p.radius = max(1.0, pdata["radius"] * RADIUS_VISUAL_SCALE * 20.0)
             else:
                 p.radius = max(0.5, pdata["radius"] * RADIUS_VISUAL_SCALE)
 
             self.physics_service.register_body(p)
+
+        sun = next((b for b in self.physics_service.bodies if b.name.lower() == "sun"), None)
+        if not sun:
+            return
+        for body in self.physics_service.bodies:
+            if body is not sun:
+                self.orbit_service.compute_orbit(body, sun)
+
 
     def render_ui_overlay(self, draw_fn):
         """Render a UI overlay by switching to orthographic projection."""
@@ -116,24 +128,27 @@ class Engine:
             #Sets the camera target to the selected body, making it the center
             self.camera.target = self.selection_manager.selected_body.position
 
+    def initialize_simulation(self):
+        """Initializes textures and populates the scene."""
+        if not self.textures_initialized:
+            print("Initializing planet textures...")
+            self.texture_loader.initialize_textures(planet_textures)
+            self.renderer.initialize_textures(planet_textures)
+            self.populate_scene()
+            self.textures_initialized = True
+            print("Textures and scene populated successfully.")
+
     def run(self):
         """Main loop of the engine."""
+        self.initialize_simulation()
         while self.running:
             self.input_handler.process_events()
-
-            if not self.textures_initialized:
-                print("Initializing planet textures...")
-                self.texture_loader.initialize_textures(planet_textures)
-                self.renderer.initialize_textures(planet_textures)
-                self.populate_scene()
-                self.textures_initialized = True
-                print("Textures and scene populated successfully.")
 
             if self.state == "menu":
                 self.render_ui_overlay(lambda: (self.main_menu.update(self.input_handler),
                                                 self.main_menu.render()))
             elif self.state == "simulation":
-                self.physics_service.update()
+                #self.physics_service.update()
                 self.handle_sim_input()
                 self.renderer.render(self.physics_service, self.camera)
                 self.render_ui_overlay(lambda: (self.sim_screen.update(self.input_handler),
@@ -147,4 +162,6 @@ class Engine:
     def change_state(self, new_state):
         """Change the current state of the engine."""
         if new_state in ["menu", "simulation"]:
+            if new_state == "simulation":
+                self.physics_service.start()
             self.state = new_state

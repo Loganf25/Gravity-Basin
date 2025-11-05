@@ -1,4 +1,5 @@
 """module for rendering planets using OpenGL"""
+import math
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
 
@@ -38,18 +39,43 @@ class Renderer:
     def draw_planet(self, planet):
         """Draw a planet with its texture."""
         name = planet.name.lower()
-        if name not in self.planet_textures:
-            return
 
         gl.glPushMatrix()
         gl.glTranslatef(*planet.position)
-        gl.glEnable(gl.GL_TEXTURE_2D)
-        gl.glBindTexture(gl.GL_TEXTURE_2D, self.planet_textures[name])
         gl.glRotatef(planet.rotation_angle, 0.0, 1.0, 0.0)
-        gl.glColor3f(1.0, 1.0, 1.0)
-        self.draw_sphere(planet.radius)
-        gl.glDisable(gl.GL_TEXTURE_2D)
+        #Sun 
+        if name == "sun":
+            gl.glDisable(gl.GL_LIGHTING)
+            gl.glColor3f(1.0, 1.0, 1.0)
+            self.draw_sphere(planet.radius)
+            gl.glEnable(gl.GL_LIGHTING)
+        #Pre defined planets 
+        elif name in self.planet_textures:
+            gl.glEnable(gl.GL_TEXTURE_2D)
+            gl.glBindTexture(gl.GL_TEXTURE_2D, self.planet_textures[name])
+            gl.glColor3f(1.0, 1.0, 1.0)
+            self.draw_sphere(planet.radius)
+            gl.glDisable(gl.GL_TEXTURE_2D)
+        else:
+            #Fallback for custom planets without textures
+            self.draw_sphere(planet.radius)
         gl.glPopMatrix()
+
+    def draw_orbit(self, radius):
+        """Draw the orbit path as a circle in the XZ plane."""
+        gl.glDisable(gl.GL_LIGHTING)
+        gl.glDisable(gl.GL_TEXTURE_2D)
+        gl.glColor3f(0.3, 0.3, 0.3)
+        gl.glBegin(gl.GL_LINE_LOOP)
+
+        num_segments = 100
+        for i in range(num_segments):
+            angle = 2 * math.pi * i / num_segments
+            x = radius * math.cos(angle)
+            z = radius * math.sin(angle)
+            gl.glVertex3f(x, 0.0, z)
+
+        gl.glEnd()
 
     def render(self, physics_service, camera):
         """Render all planets from the camera's viewpoint."""
@@ -58,6 +84,11 @@ class Renderer:
 
         # apply dynamic camera
         camera.apply()
+
+        for body in physics_service.bodies:
+            if body.name.lower() != "sun":
+                dist = math.sqrt(body.initial_position[0]**2 + body.initial_position[1]**2 + body.initial_position[2]**2)
+                self.draw_orbit(dist)
 
         self.setup_lighting()
 

@@ -3,7 +3,8 @@
 import math
 import time
 
-G = 6.67430e-11  # gravitational constant (m^3 kg^-1 s^-2)
+#G = 6.67430e-11  # gravitational constant (m^3 kg^-1 s^-2)
+G = 1.0  # scaled gravitational constant for simulation
 
 class PhysicsService:
     """Service to manage physics simulation including gravitational interactions."""
@@ -68,7 +69,7 @@ class PhysicsService:
         forces = {body: [0.0, 0.0, 0.0] for body in self.bodies}
 
         # accumulate forces
-        for i in enumerate(self.bodies):
+        for i in range(len(self.bodies)):
             for j in range(i + 1, len(self.bodies)):
                 b1 = self.bodies[i]
                 b2 = self.bodies[j]
