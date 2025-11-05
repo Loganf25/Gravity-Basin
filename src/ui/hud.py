@@ -35,6 +35,7 @@ class SimulationScreen:
         self.draw_button_text("[object menu]",1000, 10, 260, 700, 1.0, 0.8, 0.2)
 
     def draw_button_text(self, text, x, y, w, h, r, g, b):
+        """Draw a button with text."""
         self.draw_button(x,y,w,h, r,g,b)
         self.draw_text(text, x + w/2, y + h/2 + 10, 0,0,0, align="center")
 

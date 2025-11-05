@@ -1,0 +1,4 @@
+#Dependencies for the Universe Simulator application
+pytest
+OpenGL
+pygame

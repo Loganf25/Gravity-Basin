@@ -36,7 +36,8 @@ class TextureLoader:
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR)
 
         gl_format = gl.GL_RGBA if image_format == "RGBA" else gl.GL_RGB
-        gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl_format, width, height, 0, gl_format, gl.GL_UNSIGNED_BYTE, buf)
+        gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl_format,
+                        width, height, 0, gl_format, gl.GL_UNSIGNED_BYTE, buf)
 
         gl.glBindTexture(gl.GL_TEXTURE_2D, 0)
         self.textures[file_path] = texture_id

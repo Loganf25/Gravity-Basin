@@ -5,7 +5,7 @@ import time
 
 G = 6.67430e-11  # gravitational constant (m^3 kg^-1 s^-2)
 AU_IN_METERS = 1.496e11  # astronomical unit in meters
-VISUAL_TO_METERS = 1.0 / 8.0 
+VISUAL_TO_METERS = 1.0 / 8.0
 
 class PhysicsService:
     """Service to manage physics simulation including gravitational interactions."""
@@ -70,10 +70,8 @@ class PhysicsService:
         forces = {body: [0.0, 0.0, 0.0] for body in self.bodies}
 
         # accumulate forces
-        for i in range(len(self.bodies)):
-            for j in range(i + 1, len(self.bodies)):
-                b1 = self.bodies[i]
-                b2 = self.bodies[j]
+        for i, b1 in enumerate(self.bodies):
+            for b2 in self.bodies[i + 1:]:
                 force_vector = self.compute_gravitational_force(b1, b2)
 
                 forces[b1][0] += force_vector[0]
