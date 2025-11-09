@@ -153,11 +153,18 @@ class Engine:
         """Initializes textures and populates the scene."""
         if not self.textures_initialized:
             print("Initializing planet textures...")
+            
+            # only load textures if no texture loading exception occurs
             self.texture_loader.initialize_textures(planet_textures)
-            self.renderer.initialize_textures(planet_textures)
-            self.populate_scene()
-            self.textures_initialized = True
-            print("Textures and scene populated successfully.")
+            if (self.texture_loader.textures_loaded):
+                self.renderer.initialize_textures(planet_textures)
+                self.populate_scene()
+                self.textures_initialized = True
+                print("Textures and scene populated successfully.")
+            else:
+                print("Textures failed to load.")
+                return
+
 
     def run(self):
         """Main loop of the engine."""
