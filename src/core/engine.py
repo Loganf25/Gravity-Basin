@@ -163,6 +163,7 @@ class Engine:
                 print("Textures and scene populated successfully.")
             else:
                 print("Textures failed to load.")
+                self.running = False
                 return
 
 
