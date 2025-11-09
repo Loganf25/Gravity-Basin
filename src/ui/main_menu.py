@@ -1,6 +1,7 @@
 """Main menu UI module for the Universe Simulator application."""
 import OpenGL.GL as gl
 import OpenGL.GLUT as glut
+from core.states import States
 
 class MainMenu:
     """Main menu screen with start button."""
@@ -18,7 +19,7 @@ class MainMenu:
             x, y = input_handler.mouse_pos
             bx, by, bw, bh = self.button_rect
             if bx <= x <= bx + bw and by <= y <= by + bh:
-                self.engine.change_state("simulation")
+                self.engine.change_state(States.SIMULATION)
 
     def render(self):
         """Render the main menu."""
