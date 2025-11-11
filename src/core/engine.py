@@ -62,7 +62,8 @@ class Engine:
         gl.glLoadIdentity()
         gl.glClearColor(0.0, 0.0, 0.0, 1.0)
 
-    def populate_scene(self):
+
+    def populate_scene(self, i = -1):
         """Create Sun and planets, scale for visualization, and register with PhysicsService.
 
         This implementation uses the Planet factory and keeps visualization-only
@@ -70,19 +71,29 @@ class Engine:
         creating ad-hoc objects or assigning attributes to unknown types.
         """
 
-        # Create and register each planet using the Planet model
-        for pdata in PLANET_DATA:
-            planet = self._create_planet(pdata)
-            if planet is not None:
-                self.physics_service.register_body(planet)
+        if i == -1:
+            # Create and register each planet using the Planet model
+            for pdata in PLANET_DATA:
+                planet = self._create_planet(pdata)
+                if planet is not None:
+                    self.physics_service.register_body(planet)
 
-        # After all bodies are registered, compute orbits using the Sun as center
-        sun = next((b for b in self.physics_service.bodies if getattr(b, "name", "").lower() == "sun"), None)
-        if not sun:
-            return
-        for body in self.physics_service.bodies:
-            if body is not sun:
-                self.orbit_service.compute_orbit(body, sun)
+                            # After all bodies are registered, compute orbits using the Sun as center
+            sun = next((b for b in self.physics_service.bodies if getattr(b, "name", "").lower() == "sun"), None)
+            if not sun:
+                return
+            for body in self.physics_service.bodies:
+                if body is not sun:
+                    self.orbit_service.compute_orbit(body, sun)
+        else:
+            # Create and register each planet using the Planet model
+            for j in range(len(PLANET_DATA)):
+                planet = self._create_planet(PLANET_DATA[j])
+                if planet is not None and j == i:
+                    self.physics_service.register_body(planet)
+                    print("manually spawned ",PLANET_DATA[j])
+
+
 
     def _create_planet(self, pdata):
         """Create a Planet instance from planet data and add visualization attrs.
