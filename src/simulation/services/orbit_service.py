@@ -27,6 +27,10 @@ class OrbitService:
         if visual_distance == 0:
             return None
 
+        # in case of same position objects, just return none
+        if distance_in_meters == 0:
+            return None
+        
         # Compute orbital velocity
         orbital_velocity = math.sqrt(G * body2.mass / distance_in_meters)
 

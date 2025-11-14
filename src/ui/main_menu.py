@@ -1,13 +1,23 @@
 """Main menu UI module for the Universe Simulator application."""
 import OpenGL.GL as gl
 import OpenGL.GLUT as glut
-from core.states import States
 
 class MainMenu:
     """Main menu screen with start button."""
     def __init__(self, engine):
         self.engine = engine
-        self.button_rect = (540, 300, 200, 80)
+
+        #all the buttons on the hud
+        self.button_list = []
+        self.button_list.append((50, 300, 200, 80)) # simulation button
+        self.button_list.append((50, 400, 200, 80)) # credits button
+        self.button_list.append((50, 500, 200, 80)) # quit button
+
+    """is (x,y) within button(bx,by,bw,bh)"""
+    def within_bounds(self,x,y,bx,by,bw,bh):
+        if bx <= x <= bx + bw and by <= y <= by + bh:
+            return True
+        return False
 
     def update(self, input_handler):
         """Update menu state based on input."""
@@ -16,10 +26,28 @@ class MainMenu:
             return
 
         if input_handler.mouse_pressed:
+
             x, y = input_handler.mouse_pos
-            bx, by, bw, bh = self.button_rect
-            if bx <= x <= bx + bw and by <= y <= by + bh:
-                self.engine.change_state(States.SIMULATION)
+
+            #for every button
+            for i in range(len(self.button_list)):
+
+                bx, by, bw, bh = self.button_list[i]
+
+                #if mouse within some button
+                if self.within_bounds(x, y, bx, by, bw, bh):
+
+                    #start simulation button
+                    if i == 0:
+                        self.engine.change_state("simulation")
+                    if i == 1:
+                        #self.engine.change_state("credits") will be implemented
+                        print("sorry non functional right now, credits screen doesent exist yet")
+                        break
+                    if i == 2:
+                        #self.exit program (whatever the proper function for this is)
+                        print("nope you get to stay forever")
+                        break
 
     def render(self):
         """Render the main menu."""
@@ -40,19 +68,22 @@ class MainMenu:
         gl.glDisable(gl.GL_DEPTH_TEST)
         gl.glDisable(gl.GL_LIGHTING)
 
-        # draw the menu
-        bx, by, bw, bh = self.button_rect
-        self.draw_button(bx, by, bw, bh, 0.2, 0.6, 1.0)
-        self.draw_text("Universe Simulator", 150, 200, 1.0, 1.0, 1.0, align="center")
-        self.draw_text("Start Simulation", bx + bw/2, by + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
+        # draw the title
+        self.draw_text("Universe Simulator", 400, 200, 1.0, 1.0, 1.0, align="center", scale = 120)
 
-        #draw a few more dummy buttons
-        self.draw_button(bx, by+80, bw, bh, 0.2, 0.6, 1.0)
-        self.draw_text("dummy button 1", bx + bw/2, by + 80 + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
-        self.draw_button(bx, by+160, bw, bh, 0.2, 0.6, 1.0)
-        self.draw_text("dummy button 2", bx + bw/2, by + 160 + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
-        self.draw_button(bx, by+240, bw, bh, 0.2, 0.6, 1.0)
-        self.draw_text("dummy button 3", bx + bw/2, by + 240 + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
+        #draw each button in button list
+        for i in range(len(self.button_list)):
+            bx, by, bw, bh = self.button_list[i]
+
+            if i == 0:
+                self.draw_button(bx, by, bw, bh, 0.2, 0.6, 1.0)
+                self.draw_text("Start Simulation", bx + bw/2, by + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
+            if i == 1:
+                self.draw_button(bx, by, bw, bh, 0.2, 0.6, 1.0)
+                self.draw_text("Credits", bx + bw/2, by + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
+            if i == 2:
+                self.draw_button(bx, by, bw, bh, 1,0,0)
+                self.draw_text("Exit", bx + bw/2, by + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
 
         # restore previous GL state
         gl.glEnable(gl.GL_DEPTH_TEST)
@@ -73,21 +104,64 @@ class MainMenu:
         gl.glEnd()
         gl.glColor3f(*current_color[:3])
 
-    def draw_text(self, text, x, y, r, g, b, align="left"):
-        """Draw text at specified position with color and alignment."""
-        current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR)
-        gl.glColor3f(r, g, b)
+    def draw_text(self, text, x, y, r, g, b, align="left"): 
 
-        width = sum(glut.glutBitmapWidth(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) for ch in text)
+        """Draw text at specified position with color and alignment.""" 
+        current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR) 
+        gl.glColor3f(r, g, b) 
+        width = sum(glut.glutBitmapWidth(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) for ch in text) 
+        if align == "center": 
+            x -= width / 2.0 
+        elif align == "right": 
+            x -= width 
+            
+        gl.glRasterPos2f(x, y) 
 
-        if align == "center":
-            x -= width / 2.0
-        elif align == "right":
-            x -= width
+        for ch in text: 
+            glut.glutBitmapCharacter(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) 
+            gl.glColor3f(*current_color[:3])
 
-        gl.glRasterPos2f(x, y)
+    def draw_text(self, text, x, y, r, g, b, align="left", scale=40):
 
-        for ch in text:
-            glut.glutBitmapCharacter(glut.GLUT_BITMAP_HELVETICA_18, ord(ch))
+        """scaled text"""
+        if scale != 40:
 
-        gl.glColor3f(*current_color[:3])
+            """Draw scalable text using GLUT stroke fonts."""
+            current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR)
+            gl.glColor3f(r, g, b)
+
+            gl.glPushMatrix()
+            gl.glTranslatef(x, y, 0.0)
+            gl.glScalef(scale * 0.005, scale * -0.005, 1.0)  # scale visual size
+
+            # approximate width for alignment
+            width = sum(glut.glutStrokeWidth(glut.GLUT_STROKE_ROMAN, ord(ch)) for ch in text)
+
+            if align == "center":
+                gl.glTranslatef(-width / 2.0, 0.0, 0.0)
+            elif align == "right":
+                gl.glTranslatef(-width, 0.0, 0.0)
+
+            for ch in text:
+                glut.glutStrokeCharacter(glut.GLUT_STROKE_ROMAN, ord(ch))
+
+            gl.glPopMatrix()
+            gl.glColor3f(*current_color[:3])
+
+        
+        else:
+            """non scaled text"""
+            """Draw text at specified position with color and alignment.""" 
+            current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR) 
+            gl.glColor3f(r, g, b) 
+            width = sum(glut.glutBitmapWidth(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) for ch in text) 
+            if align == "center": 
+                x -= width / 2.0 
+            elif align == "right": 
+                x -= width 
+                
+            gl.glRasterPos2f(x, y) 
+
+            for ch in text: 
+                glut.glutBitmapCharacter(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) 
+                gl.glColor3f(*current_color[:3])

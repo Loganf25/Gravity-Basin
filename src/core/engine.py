@@ -1,10 +1,10 @@
 """Core engine module for the Universe Simulator application."""
-import pygame
 import math
+from collections import deque
+import pygame
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
 import OpenGL.GLUT as glut
-from collections import deque
 
 from core.states import States
 from core.input_handler import InputHandler
@@ -12,13 +12,13 @@ from core.selection_manager import SelectionManager
 from ui.main_menu import MainMenu
 from ui.hud import SimulationScreen
 from graphics.renderer import Renderer
+from graphics.camera import Camera
 from graphics.texture_loader import TextureLoader
 from simulation.services.orbit_service import OrbitService
 from simulation.services.physics_service import PhysicsService, G, AU_IN_METERS
 from simulation.data.simulation_data import planet_textures, PLANET_DATA
 from simulation.models.planet import Planet
-from simulation.models.star import Star
-from graphics.camera import Camera
+#from simulation.models.star import Star
 
 
 AU_VISUAL_SCALE = 8.0
@@ -63,60 +63,84 @@ class Engine:
         gl.glLoadIdentity()
         gl.glClearColor(0.0, 0.0, 0.0, 1.0)
 
-    def populate_scene(self):
-        """Create Sun and planets, scale for visualization, and register with PhysicsService."""
 
-        sun_mass = next((p["mass"] for p in PLANET_DATA if p["name"].lower() == "sun"), None)
+    def populate_scene(self, i = -1):
+        """Create Sun and planets, scale for visualization, and register with PhysicsService.
 
-        for pdata in PLANET_DATA:
-            try:
-                p = Planet(pdata["name"])
-            except (ValueError, AttributeError):
-                class _P: pass
-                p = _P()
-                p.name = pdata["name"]
-                p.mass = pdata["mass"]
-                p.texture = pdata["texture"]
-                p.color = pdata["color"]
-                p.velocity = [0.0, 0.0, 0.0]
-                p.rotation_angle = 0.0
-                p.initial_position = [0.0, 0.0, 0.0]
+        This implementation uses the Planet factory and keeps visualization-only
+        attributes (trail, visual radius, position) in the engine. It avoids
+        creating ad-hoc objects or assigning attributes to unknown types.
+        """
 
-            # Dynamically calculate trail length to be 75% of the planet's orbit
-            if pdata["name"].lower() != "sun" and sun_mass is not None:
-                # Use Kepler's Third Law to find the orbital period in seconds
-                distance_m = pdata["distance_from_sun"] * AU_IN_METERS
-                orbital_period_s = 2 * math.pi * math.sqrt(distance_m**3 / (G * sun_mass))
+        if i == -1:
+            # Create and register each planet using the Planet model
+            for pdata in PLANET_DATA:
+                planet = self._create_planet(pdata)
+                if planet is not None:
+                    self.physics_service.register_body(planet)
 
-                # Calculate how many simulation steps (frames) this period corresponds to
-                sim_time_per_frame = (1 / 60.0) * self.physics_service.time_scale
-                frames_for_full_orbit = orbital_period_s / sim_time_per_frame
+                            # After all bodies are registered, compute orbits using the Sun as center
+            sun = next((b for b in self.physics_service.bodies if getattr(b, "name", "").lower() == "sun"), None)
+            if not sun:
+                return
+            for body in self.physics_service.bodies:
+                if body is not sun:
+                    self.orbit_service.compute_orbit(body, sun)
+        else:
+            # Create and register each planet using the Planet model
+            for j in range(len(PLANET_DATA)):
+                planet = self._create_planet(PLANET_DATA[j])
+                if planet is not None and j == i:
+                    self.physics_service.register_body(planet)
+                    print("manually spawned ",PLANET_DATA[j])
 
-                # Set the trail to be 75% of a full orbit, with a minimum length
-                trail_len = int(0.75 * frames_for_full_orbit)
-                p.trail = deque(maxlen=max(50, trail_len)) # min length of 50
-            else:
-                # Sun doesn't have an orbit trail
-                p.trail = deque(maxlen=0)
 
-            # position along X-axis
-            p.position = [pdata["distance_from_sun"] * AU_VISUAL_SCALE, 0.0, 0.0]
-            p.initial_position = list(p.position)
 
-            # visual radius
-            if pdata["name"].lower() == "sun":
-                p.radius = max(1.0, pdata["radius"] * RADIUS_VISUAL_SCALE * 20.0)
-            else:
-                p.radius = max(0.5, pdata["radius"] * RADIUS_VISUAL_SCALE)
+    def _create_planet(self, pdata):
+        """Create a Planet instance from planet data and add visualization attrs.
 
-            self.physics_service.register_body(p)
+        Returns Planet instance or None on failure.
+        """
+        try:
+            p = Planet(pdata["name"])
+        except (ValueError, AttributeError) as exc:
+            # Log and skip planets that can't be constructed from data
+            print(f"Warning: could not construct Planet '{pdata.get('name')}' - {exc}")
+            return None
 
-        sun = next((b for b in self.physics_service.bodies if b.name.lower() == "sun"), None)
-        if not sun:
-            return
-        for body in self.physics_service.bodies:
-            if body is not sun:
-                self.orbit_service.compute_orbit(body, sun)
+        # Trail length: 75% of orbital frames; minimum handled below
+        if pdata["name"].lower() != "sun":
+            trail_len = self._calculate_trail_length(pdata)
+            p.trail = deque(maxlen=max(50, trail_len))
+        else:
+            p.trail = deque(maxlen=0)
+
+        # Position (visual units)
+        p.position = [pdata["distance_from_sun"] * AU_VISUAL_SCALE, 0.0, 0.0]
+        p.initial_position = list(p.position)
+
+        # Visual radius scaling (keeps original radius value on model untouched)
+        base_radius = pdata.get("radius", 1.0) * RADIUS_VISUAL_SCALE
+        if pdata["name"].lower() == "sun":
+            p.radius = max(1.0, base_radius * 20.0)
+        else:
+            p.radius = max(0.5, base_radius)
+
+        return p
+
+    def _calculate_trail_length(self, pdata):
+        """Calculate trail length (frames) based on orbital period and time scale."""
+        sun_mass = next((d["mass"] for d in PLANET_DATA if d["name"].lower() == "sun"), None)
+        if sun_mass is None:
+            return 50
+
+        distance_m = pdata["distance_from_sun"] * AU_IN_METERS
+        orbital_period_s = 2 * math.pi * math.sqrt(distance_m**3 / (G * sun_mass))
+
+        # Convert orbital period seconds to number of simulation frames
+        sim_time_per_frame = (1 / 60.0) * self.physics_service.time_scale
+        frames_for_full_orbit = orbital_period_s / sim_time_per_frame
+        return int(0.75 * frames_for_full_orbit)
 
 
     def render_ui_overlay(self, draw_fn):

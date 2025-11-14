@@ -80,10 +80,6 @@
 │
 └── 🐍 requirements.txt ✅ lists pygame, pyopengl, numpy
 
-current issues :
-planets not scaled properly,
-sun is missing,
-something is wrong with venus.
 
 Icons for Additions
 🐍 - Python Script

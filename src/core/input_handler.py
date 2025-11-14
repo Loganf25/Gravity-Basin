@@ -1,6 +1,5 @@
 """Input handling module for the Universe Simulator application."""
 import pygame
-from core.selection_manager import SelectionManager
 
 class InputHandler:
     """Handles user input events such as mouse movements, clicks, and wheel scrolling."""

@@ -1,5 +1,4 @@
 """module for rendering planets using OpenGL"""
-import math
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
 
@@ -43,13 +42,13 @@ class Renderer:
         gl.glPushMatrix()
         gl.glTranslatef(*planet.position)
         gl.glRotatef(planet.rotation_angle, 0.0, 1.0, 0.0)
-        #Sun 
+        #Sun
         if name == "sun":
             gl.glDisable(gl.GL_LIGHTING)
             gl.glColor3f(1.0, 1.0, 1.0)
             self.draw_sphere(planet.radius)
             gl.glEnable(gl.GL_LIGHTING)
-        #Pre defined planets 
+        #Pre defined planets
         elif name in self.planet_textures:
             gl.glEnable(gl.GL_TEXTURE_2D)
             gl.glBindTexture(gl.GL_TEXTURE_2D, self.planet_textures[name])
