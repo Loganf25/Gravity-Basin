@@ -1,6 +1,14 @@
 """Main menu UI module for the Universe Simulator application."""
 import OpenGL.GL as gl
 import OpenGL.GLUT as glut
+from core.states import States
+
+class button:
+    def __init__(self, bx, by,  bw, bh):
+        self.bx = bx
+        self.by = by
+        self.bw = bw
+        self.bh = bh
 
 class MainMenu:
     """Main menu screen with start button."""
@@ -8,14 +16,17 @@ class MainMenu:
         self.engine = engine
 
         #all the buttons on the hud
-        self.button_list = []
-        self.button_list.append((50, 300, 200, 80)) # simulation button
-        self.button_list.append((50, 400, 200, 80)) # credits button
-        self.button_list.append((50, 500, 200, 80)) # quit button
+        self.button_list = {}
+        bx, by, bw, bh = 50, 300, 200, 80
+        self.button_list[States.SIMULATION] = button(bx, by, bw, bh) # simulation button
+        by += 100
+        self.button_list[States.CREDITS] = button(bx, by, bw, bh) # credits button
+        by += 100
+        self.button_list[States.EXIT] = button(bx, by, bw, bh) # quit button
 
     """is (x,y) within button(bx,by,bw,bh)"""
-    def within_bounds(self,x,y,bx,by,bw,bh):
-        if bx <= x <= bx + bw and by <= y <= by + bh:
+    def within_bounds(self,x,y,button):
+        if ((button.bx <= x <= button.bx + button.bw) and (button.by <= y <= button.by + button.bh)):
             return True
         return False
 
@@ -30,23 +41,23 @@ class MainMenu:
             x, y = input_handler.mouse_pos
 
             #for every button
-            for i in range(len(self.button_list)):
+            for button_key in self.button_list:
 
-                bx, by, bw, bh = self.button_list[i]
+                button_obj = self.button_list[button_key]
 
                 #if mouse within some button
-                if self.within_bounds(x, y, bx, by, bw, bh):
+                if self.within_bounds(x, y, button_obj):
 
                     #start simulation button
-                    if i == 0:
-                        self.engine.change_state("simulation")
-                    if i == 1:
-                        #self.engine.change_state("credits") will be implemented
+                    if button_key is States.SIMULATION:
+                        self.engine.change_state(States.SIMULATION)
+                    if button_key is States.CREDITS:
+                        self.engine.change_state(States.CREDITS) # TODO: create credits screen
                         print("sorry non functional right now, credits screen doesent exist yet")
                         break
-                    if i == 2:
+                    if button_key is States.EXIT:
                         #self.exit program (whatever the proper function for this is)
-                        print("nope you get to stay forever")
+                        self.engine.change_state(States.EXIT)
                         break
 
     def render(self):
@@ -72,18 +83,20 @@ class MainMenu:
         self.draw_text("Universe Simulator", 400, 200, 1.0, 1.0, 1.0, align="center", scale = 120)
 
         #draw each button in button list
-        for i in range(len(self.button_list)):
-            bx, by, bw, bh = self.button_list[i]
-
-            if i == 0:
-                self.draw_button(bx, by, bw, bh, 0.2, 0.6, 1.0)
-                self.draw_text("Start Simulation", bx + bw/2, by + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
-            if i == 1:
-                self.draw_button(bx, by, bw, bh, 0.2, 0.6, 1.0)
-                self.draw_text("Credits", bx + bw/2, by + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
-            if i == 2:
-                self.draw_button(bx, by, bw, bh, 1,0,0)
-                self.draw_text("Exit", bx + bw/2, by + bh/2 + 15, 0.0, 0.0, 0.0, align="center")
+        for button_key in self.button_list:
+            button_obj = self.button_list[button_key]
+            x = button_obj.bx + button_obj.bw/2
+            y = button_obj.by + button_obj.bh/2 + 15
+            
+            if button_key is States.SIMULATION:
+                self.draw_button(button_obj, 0.2, 0.6, 1.0)
+                self.draw_text("Start Simulation", x, y, 0.0, 0.0, 0.0, align="center")
+            if button_key is States.CREDITS:
+                self.draw_button(button_obj, 0.2, 0.6, 1.0)
+                self.draw_text("Credits", x, y, 0.0, 0.0, 0.0, align="center")
+            if button_key is States.EXIT:
+                self.draw_button(button_obj, 1,0,0)
+                self.draw_text("Exit", x, y, 0.0, 0.0, 0.0, align="center")
 
         # restore previous GL state
         gl.glEnable(gl.GL_DEPTH_TEST)
@@ -92,11 +105,12 @@ class MainMenu:
         gl.glMatrixMode(gl.GL_MODELVIEW)
         gl.glPopMatrix()
 
-    def draw_button(self, x, y, w, h, r, g, b):
+    def draw_button(self, button_obj, r, g, b):
         """Draw a colored rectangle button."""
         current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR)
         gl.glColor3f(r, g, b)
         gl.glBegin(gl.GL_QUADS)
+        x, y, w, h = button_obj.bx, button_obj.by, button_obj.bw, button_obj.bh
         gl.glVertex2f(x, y)
         gl.glVertex2f(x + w, y)
         gl.glVertex2f(x + w, y + h)
@@ -121,7 +135,7 @@ class MainMenu:
             glut.glutBitmapCharacter(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) 
             gl.glColor3f(*current_color[:3])
 
-    def draw_text(self, text, x, y, r, g, b, align="left", scale=40):
+    def draw_text(self, text, x, y, r=1.0, g=1.0, b=1.0, align="left", scale=40):
 
         """scaled text"""
         if scale != 40:
@@ -165,3 +179,46 @@ class MainMenu:
             for ch in text: 
                 glut.glutBitmapCharacter(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) 
                 gl.glColor3f(*current_color[:3])
+                
+                
+    def __update_xy(self, x, y, mult = 1):
+        PADDING = 50
+        update = (lambda xy, padding: xy+padding)
+        x,y = update(x, PADDING * mult), update(y, PADDING * mult)
+        
+        return (x,y)
+
+    def draw_credits(self):
+        # clear the previous frame
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+        gl.glLoadIdentity()
+        
+        # switch to orthographic projection
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glPushMatrix()
+        gl.glLoadIdentity()
+        gl.glOrtho(0, 1280, 720, 0, -1, 1)  # match window coords
+        gl.glMatrixMode(gl.GL_MODELVIEW)
+        gl.glPushMatrix()
+        gl.glLoadIdentity()
+
+
+        # draw credits
+        x = 100
+        y = 100
+        self.draw_text("CREDITS", x, y, align="center", scale = 120); x,y = self.__update_xy(x,y)
+        self.draw_text("TEAM LEAD", x,y); x,y = self.__update_xy(x,y)
+        self.draw_text("----------", x,y); x,y = self.__update_xy(x,y)
+        self.draw_text("MILES", x,y); x,y = self.__update_xy(x,y)
+        self.draw_text("CODING", x,y); x,y = self.__update_xy(x,y, mult=2)
+        self.draw_text("--------", x,y); x,y = self.__update_xy(x,y)
+        self.draw_text("CASSADNRA LEDER", x,y); x,y = self.__update_xy(x,y)
+        self.draw_text("LOGAN", x,y)
+        
+                # restore previous GL state
+        gl.glEnable(gl.GL_DEPTH_TEST)
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glPopMatrix()
+        gl.glMatrixMode(gl.GL_MODELVIEW)
+        gl.glPopMatrix()
+

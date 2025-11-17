@@ -6,6 +6,7 @@ import OpenGL.GL as gl
 import OpenGL.GLU as glu
 import OpenGL.GLUT as glut
 
+from core.states import States
 from core.input_handler import InputHandler
 from core.selection_manager import SelectionManager
 from ui.main_menu import MainMenu
@@ -34,7 +35,7 @@ class Engine:
         self.clock = pygame.time.Clock()
         self.running = True
         self.input_handler = InputHandler()
-        self.state = "menu"
+        self.state = States.MENU 
 
         self.physics_service = PhysicsService()
         self.texture_loader = TextureLoader()
@@ -177,36 +178,60 @@ class Engine:
         """Initializes textures and populates the scene."""
         if not self.textures_initialized:
             print("Initializing planet textures...")
+            
+            # only load textures if no texture loading exception occurs
             self.texture_loader.initialize_textures(planet_textures)
-            self.renderer.initialize_textures(planet_textures)
-            self.populate_scene()
-            self.textures_initialized = True
-            print("Textures and scene populated successfully.")
+            if (self.texture_loader.textures_loaded):
+                self.renderer.initialize_textures(planet_textures)
+                self.populate_scene()
+                self.textures_initialized = True
+                print("Textures and scene populated successfully.")
+            else:
+                print("Textures failed to load.")
+                self.running = False
+                return
+
+    def state_switch(self, state):
+        if state == States.MENU:
+            self.render_ui_overlay(lambda: (self.main_menu.update(self.input_handler),
+                                            self.main_menu.render()))
+        elif state == States.SIMULATION:
+            self.handle_sim_input()
+            self.renderer.render(self.physics_service, self.camera)
+            self.render_ui_overlay(lambda: (self.sim_screen.update(self.input_handler),
+                                            self.sim_screen.render()))
+            self.physics_service.update()
+        elif state == States.CREDITS:
+            self.main_menu.draw_credits()
+        elif state == States.EXIT:
+            self.exit()
+        elif state == States.PAUSE:
+            self.pause()
+        
+    
 
     def run(self):
         """Main loop of the engine."""
         self.initialize_simulation()
         while self.running:
             self.input_handler.process_events()
-
-            if self.state == "menu":
-                self.render_ui_overlay(lambda: (self.main_menu.update(self.input_handler),
-                                                self.main_menu.render()))
-            elif self.state == "simulation":
-                self.handle_sim_input()
-                self.renderer.render(self.physics_service, self.camera)
-                self.render_ui_overlay(lambda: (self.sim_screen.update(self.input_handler),
-                                                self.sim_screen.render()))
-                self.physics_service.update()
+            self.state_switch(state=self.state)
 
             pygame.display.flip()
             self.clock.tick(60)
 
         pygame.quit()
+    
+    def exit(self):
+        self.running = False
 
     def change_state(self, new_state):
         """Change the current state of the engine."""
-        if new_state in ["menu", "simulation"]:
-            if new_state == "simulation":
-                self.physics_service.start()
-            self.state = new_state
+        if new_state in States: # check to see if new state is member of enum
+            self.state_switch(new_state)
+        else: # failed type-check
+            # TODO: add logging
+            print("Error! Invalid state: " + new_state)    
+        
+        self.state = new_state
+        
