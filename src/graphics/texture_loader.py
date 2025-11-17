@@ -46,14 +46,13 @@ class TextureLoader:
 
     def initialize_textures(self, planet_textures):
         """Loads all planet textures and stores their OpenGL IDs"""
-        print("Initializing planet textures...")
-        for planet, path in planet_textures.items():
-            try:
+        try:
+            for planet, path in planet_textures.items():
                 tex_id = self.load_texture(path)
                 print(f"Loaded {planet}: {path} (ID={tex_id})")
-            except (FileNotFoundError, IOError) as e:
-                print(f"Failed to load {planet} texture: {e}")
-            else:
-                print("All textures initialized successfully.")
-                self.textures_loaded = True
+        except (FileNotFoundError, IOError) as e:
+            print(f"Failed to load {planet} texture: {e}")
+        else:
+            print("All textures initialized successfully.")
+            self.textures_loaded = True
             

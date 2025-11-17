@@ -3,6 +3,7 @@ import OpenGL.GL as gl
 import OpenGL.GLUT as glut
 from simulation.data.simulation_data import planet_textures, PLANET_DATA
 from simulation.services.physics_service import PhysicsService
+from core.states import States
 
 class SimulationScreen:
     """Heads-up display for the simulation screen with return to menu button."""
@@ -62,7 +63,7 @@ class SimulationScreen:
 
                     #back to menu button
                     if i == 0:
-                        self.engine.change_state("menu")
+                        self.engine.change_state(States.MENU)
 
                     # indexes are liable to change, ordering should be back,time,info,spawn
 

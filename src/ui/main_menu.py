@@ -1,6 +1,7 @@
 """Main menu UI module for the Universe Simulator application."""
 import OpenGL.GL as gl
 import OpenGL.GLUT as glut
+from core.states import States
 
 class MainMenu:
     """Main menu screen with start button."""
@@ -39,7 +40,7 @@ class MainMenu:
 
                     #start simulation button
                     if i == 0:
-                        self.engine.change_state("simulation")
+                        self.engine.change_state(States.SIMULATION)
                     if i == 1:
                         #self.engine.change_state("credits") will be implemented
                         print("sorry non functional right now, credits screen doesent exist yet")
