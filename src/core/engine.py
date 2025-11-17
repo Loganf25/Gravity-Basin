@@ -201,9 +201,13 @@ class Engine:
             self.render_ui_overlay(lambda: (self.sim_screen.update(self.input_handler),
                                             self.sim_screen.render()))
             self.physics_service.update()
-            
+        elif state == States.CREDITS:
+            self.main_menu.draw_credits()
+        elif state == States.EXIT:
+            self.exit()
         elif state == States.PAUSE:
             self.pause()
+        
     
 
     def run(self):
@@ -217,16 +221,17 @@ class Engine:
             self.clock.tick(60)
 
         pygame.quit()
+    
+    def exit(self):
+        self.running = False
 
     def change_state(self, new_state):
         """Change the current state of the engine."""
         if new_state in States: # check to see if new state is member of enum
-            if new_state is States.SIMULATION:
-                self.physics_service.start()
-            elif new_state is States.PAUSE:
-                self.physics_service.pause()
+            self.state_switch(new_state)
         else: # failed type-check
             # TODO: add logging
             print("Error! Invalid state: " + new_state)    
         
         self.state = new_state
+        
