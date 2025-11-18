@@ -2,6 +2,7 @@
 import OpenGL.GL as gl
 import OpenGL.GLUT as glut
 from core.states import States
+from graphics.texture_loader import TextureLoader
 
 class button:
     def __init__(self, bx, by,  bw, bh):
@@ -52,8 +53,7 @@ class MainMenu:
                     if button_key is States.SIMULATION:
                         self.engine.change_state(States.SIMULATION)
                     if button_key is States.CREDITS:
-                        self.engine.change_state(States.CREDITS) # TODO: create credits screen
-                        print("sorry non functional right now, credits screen doesent exist yet")
+                        self.engine.change_state(States.CREDITS)
                         break
                     if button_key is States.EXIT:
                         #self.exit program (whatever the proper function for this is)
@@ -181,12 +181,12 @@ class MainMenu:
                 gl.glColor3f(*current_color[:3])
                 
                 
-    def __update_xy(self, x, y, mult = 1):
+    def __update_xy(self, y, mult = 1):
         PADDING = 50
-        update = (lambda xy, padding: xy+padding)
-        x,y = update(x, PADDING * mult), update(y, PADDING * mult)
+        update = (lambda y, padding: y+padding)
+        y = update(y, PADDING * mult)
         
-        return (x,y)
+        return (y)
 
     def draw_credits(self):
         # clear the previous frame
@@ -201,21 +201,34 @@ class MainMenu:
         gl.glMatrixMode(gl.GL_MODELVIEW)
         gl.glPushMatrix()
         gl.glLoadIdentity()
+        
+        tl = TextureLoader()
+        star_id = tl.load_texture("assets/images/stars.jpg")
 
+        gl.glEnable(gl.GL_TEXTURE_2D)
+        gl.glBindTexture(gl.GL_TEXTURE_2D, star_id)
+        # draw quad the size of the screen to make backgroud image
+        gl.glBegin(gl.GL_QUADS)
+        gl.glTexCoord2f(0, 0); gl.glVertex2f(0, 0)
+        gl.glTexCoord2f(1, 0); gl.glVertex2f(1280, 0)
+        gl.glTexCoord2f(1, 1); gl.glVertex2f(1280, 720)
+        gl.glTexCoord2f(0, 1); gl.glVertex2f(0, 720)
+        gl.glEnd()
+        gl.glDisable(gl.GL_TEXTURE_2D)
 
         # draw credits
-        x = 100
+        x = 300
         y = 100
-        self.draw_text("CREDITS", x, y, align="center", scale = 120); x,y = self.__update_xy(x,y)
-        self.draw_text("TEAM LEAD", x,y); x,y = self.__update_xy(x,y)
-        self.draw_text("----------", x,y); x,y = self.__update_xy(x,y)
-        self.draw_text("MILES", x,y); x,y = self.__update_xy(x,y)
-        self.draw_text("CODING", x,y); x,y = self.__update_xy(x,y, mult=2)
-        self.draw_text("--------", x,y); x,y = self.__update_xy(x,y)
-        self.draw_text("CASSADNRA LEDER", x,y); x,y = self.__update_xy(x,y)
+        self.draw_text("CREDITS", x, y, align="center", scale = 120); y = self.__update_xy(y)
+        self.draw_text("TEAM LEAD", x,y); y = self.__update_xy(y)
+        self.draw_text("----------", x,y); y = self.__update_xy(y)
+        self.draw_text("MILES", x,y); y = self.__update_xy(y, mult=2)
+        self.draw_text("CODING", x,y); y = self.__update_xy(y)
+        self.draw_text("--------", x,y); y = self.__update_xy(y)
+        self.draw_text("CASSANDRA LEDER", x,y); y = self.__update_xy(y)
         self.draw_text("LOGAN", x,y)
         
-                # restore previous GL state
+        # restore previous GL state
         gl.glEnable(gl.GL_DEPTH_TEST)
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glPopMatrix()
