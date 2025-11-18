@@ -12,18 +12,14 @@ class SimulationScreen:
 
         #all the buttons on the hud
         self.button_list = []
+        self.label = []
         self.button_list.append((50, 80, 140, 50)) # back button
-
-        #build the time controls buttons
-
-        #todo
-        self.button_list.append((50, 10, 140, 50)) #temp button (false button)
-        #build the planet controls buttons
-        #todo
-        self.button_list.append((50, 600, 920, 110)) #temp button (false button)
-        #build the object menu buttons
-        #todo
-        self.button_list.append((1000, 10, 260, 700)) #temp button (false button)
+        self.locked = 0
+        
+        #the 3 button regions
+        self.button_list.append((50, 10, 140, 50)) # time controls box (false button)
+        self.button_list.append((50, 550, 570, 160)) # planet controls box (false button)
+        self.button_list.append((1000, 10, 260, 700)) # object menu box (false button)
 
         #building the planet adding buttons
         for i in range(12):
@@ -31,10 +27,31 @@ class SimulationScreen:
                 self.button_list.append((1000+20, 33+i*55, 100, 100))
                 self.button_list.append((1000+140, 33+i*55, 100, 100))
 
-        # real time buttons
-        self.button_list.append((55, 15, 40, 40)) # half time speed
-        self.button_list.append((100, 15, 40, 40)) # pause / play time
-        self.button_list.append((145, 15, 40, 40)) # double time speed
+        # real time buttons (id 16-18)
+        self.button_list.append((55, 15, 40, 40)) # half time speed 16
+        self.button_list.append((100, 15, 40, 40)) # pause / play time 17
+        self.button_list.append((145, 15, 40, 40)) # double time speed 18
+
+        # planet info buttons (19-27)
+        self.button_list.append((60, 560, 40, 40)) # mass half 19
+        self.button_list.append((60, 610, 40, 40)) # volume half 20
+        self.button_list.append((60, 660, 40, 40)) # density half 21
+        self.button_list.append((110, 560, 40, 40)) # mass double 22
+        self.button_list.append((110, 610, 40, 40)) # volume double 23
+        self.button_list.append((110, 660, 40, 40)) # density double 24
+        self.button_list.append((160, 560, 40, 40)) # mass lock 25
+        self.button_list.append((160, 610, 40, 40)) # volume lock 26
+        self.button_list.append((160, 660, 40, 40)) # density lock 27
+
+        #labels (gets updated during runtime)
+        self.label.append("[update time speed here]") # current time speed 0
+        self.label.append("[update mass speed here]") # current mass 1
+        self.label.append("[update volume speed here]") # current volume 2
+        self.label.append("[update density speed here]") # current density 3
+    
+    #simple function to update the labels (used in engine, or gets values from engine and updates within hud)
+    def update_label(self, text, i):
+        self.label[i] = text
 
     """is (x,y) within button(bx,by,bw,bh)"""
     def within_bounds(self,x,y,bx,by,bw,bh):
@@ -91,6 +108,23 @@ class SimulationScreen:
                     if i == 18:
                         print("double")
 
+                    #the locks
+                    if i == 25:
+                        if self.locked == 1:
+                            self.locked = 0
+                        else:
+                            self.locked = 1
+                    if i == 26:
+                        if self.locked == 2:
+                            self.locked = 0
+                        else:
+                            self.locked = 2
+                    if i == 27:
+                        if self.locked == 3:
+                            self.locked = 0
+                        else:
+                            self.locked = 3
+
                     #time controls will have a few buttons (pause/play reverse, double speed, half speed)
                     
                     #planet controls (will either be entirely informational or allows for modifcation of 
@@ -100,6 +134,7 @@ class SimulationScreen:
                     #object menu 1 button for each planet
 
     def render(self):
+
         """Render the simulation HUD."""
         gl.glClearColor(0.0, 0.0, 0.1, 1)
         gl.glLoadIdentity()
@@ -117,15 +152,21 @@ class SimulationScreen:
                 self.draw_trimmed_button(bx, by, bw, bh, 0, 0, 0, 1, 1, 1)
                 text = "-1"
                 if i > 0:
-                    text = "box"  + str(i)
-                if i == 16:
+                    pass
+                    #text = "box"  + str(i)
+                if i == 16 or i == 19 or i == 20 or i == 21:
                     text = "/2"
                 if i == 17:
                     text = "s/p"
-                    self.draw_text("current time : [none gotten here yet]", bx + bw/2 + 85, by + bh/2 + 10, 1, 1, 1, align="left")
-                if i == 18:
+                    self.draw_text("current time : "+self.label[i-17], bx + bw/2 + 85, by + bh/2 + 10, 1, 1, 1, align="left")
+                if i == 18 or i == 22 or i == 23 or i == 24:
                     text = "*2"
-
+                if i == 25 or i == 26 or i == 27:
+                    self.draw_text("current time : "+self.label[i-25], bx + bw/2 + 45, by + bh/2 + 10, 1, 1, 1, align="left")
+                    if self.locked == (i-24):
+                        text = "[X]"
+                    else:
+                        text = "[ ]"
                 if text != "-1":
                     self.draw_text(text, bx + bw/2, by + bh/2 + 10, 1, 1, 1, align="center")
 
