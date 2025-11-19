@@ -1,4 +1,6 @@
 """module for rendering planets using OpenGL"""
+import math
+import random
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
 
@@ -8,6 +10,7 @@ class Renderer:
         self.texture_loader = texture_loader
         self.planet_textures = {}
         self.initialized = False
+        self.starfield_list = self.create_starfield(num_stars=10000, radius=5000)
 
     def initialize_textures(self, planet_data):
         """Load all planet textures using the provided texture loader."""
@@ -41,7 +44,12 @@ class Renderer:
 
         gl.glPushMatrix()
         gl.glTranslatef(*planet.position)
+        # Apply axial tilt
+        if hasattr(planet, 'axial_tilt'):
+            gl.glRotatef(planet.axial_tilt, 0.0, 0.0, 1.0)
+        # Apply rotation around its own axis
         gl.glRotatef(planet.rotation_angle, 0.0, 1.0, 0.0)
+        gl.glRotatef(90, 1.0, 0.0, 0.0)  # Align poles
         #Sun
         if name == "sun":
             gl.glDisable(gl.GL_LIGHTING)
@@ -61,7 +69,7 @@ class Renderer:
         gl.glPopMatrix()
 
     def draw_orbit(self, trail):
-        """Draw the orbit path from a list of points with a fading red effect."""
+        """Draw the orbit path from a list of points with a fading blue effect."""
         if len(trail) < 2:
             return
 
@@ -93,6 +101,48 @@ class Renderer:
 
         gl.glDisable(gl.GL_BLEND)
 
+    def create_starfield(self, num_stars, radius):
+        """Create a display list for a starfield.
+            Done so as a sphere of white points around the sim space
+        Inputs:
+            num_stars: Number of stars to generate
+            radius: Radius of the starfield sphere (large enough to encompass scene)
+        """
+        #Using gl list for efficiency
+        star_list = gl.glGenLists(1)
+        gl.glNewList(star_list, gl.GL_COMPILE)
+
+        gl.glDisable(gl.GL_LIGHTING)
+        gl.glDisable(gl.GL_TEXTURE_2D)
+        gl.glPointSize(1.0)
+        gl.glBegin(gl.GL_POINTS)
+        # Generate random points on sphere surface
+        for _ in range(num_stars):
+            #Choose random spherical coordinates
+            theta = random.uniform(0, 2 * math.pi)
+            phi = math.acos(random.uniform(-1, 1))
+            #Spherical to Cartesian formula 
+            x = radius * math.sin(phi) * math.cos(theta)
+            y = radius * math.sin(phi) * math.sin(theta)
+            z = radius * math.cos(phi)
+
+            #Set brightness variation
+            brightness = random.uniform(0.5, 1.0)
+            gl.glColor3f(brightness, brightness, brightness)
+            gl.glVertex3f(x, y, z)
+
+        gl.glEnd()
+        gl.glEndList()
+        return star_list
+
+    def draw_starfield(self):
+        """Render the starfield."""
+        if self.starfield_list:
+            #Don't want lighting or textures for stars, they are the light sources
+            gl.glDisable(gl.GL_LIGHTING)
+            gl.glDisable(gl.GL_TEXTURE_2D)
+            gl.glCallList(self.starfield_list)
+
     def render(self, physics_service, camera):
         """Render all planets from the camera's viewpoint."""
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
@@ -100,6 +150,9 @@ class Renderer:
 
         # apply dynamic camera
         camera.apply()
+
+        # Draw starfield to background
+        self.draw_starfield()
 
         for body in physics_service.bodies:
             if hasattr(body, 'trail') and body.name.lower() != "sun":

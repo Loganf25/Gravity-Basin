@@ -16,7 +16,8 @@ class Star(CelestialBody):
             radius=data["radius"],
             distance=data["distance_from_sun"],
             color=data["color"],
-            texture=data["texture"]
+            texture=data["texture"],
+            axial_tilt=data["axial_tilt"]
         )
 
     def update(self, delta_time):

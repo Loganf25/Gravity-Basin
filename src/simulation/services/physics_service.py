@@ -1,7 +1,6 @@
 """handles gravitational updates and manages the running simulation state"""
 
 import math
-import time
 
 G = 6.67430e-11  # gravitational constant (m^3 kg^-1 s^-2)
 AU_IN_METERS = 1.496e11  # astronomical unit in meters
@@ -11,9 +10,6 @@ class PhysicsService:
     """Service to manage physics simulation including gravitational interactions."""
     def __init__(self):
         self.bodies = []
-        self.is_running = False
-        self.last_update = None
-        self.time_scale = 3e6  # scale real time to simulation time
 
     def register_body(self, body):
         """Add a celestial body to the simulation."""
@@ -23,27 +19,9 @@ class PhysicsService:
         """Remove all bodies from the simulation."""
         self.bodies = []
 
-    def start(self):
-        """Start the simulation."""
-        if not self.is_running:
-            self.is_running = True
-            self.last_update = time.time()
-
-    def pause(self):
-        """Pause the simulation."""
-        self.is_running = False
-
-    def toggle(self):
-        """Toggle the simulation running state."""
-        self.is_running = not self.is_running
-        if self.is_running:
-            self.last_update = time.time()
-
     def reset(self):
         """Reset the simulation to initial state."""
         self.clear_bodies()
-        self.is_running = False
-        self.last_update = None
 
     def compute_gravitational_force(self, body1, body2):
         """Compute gravitational force exerted on body1 by body2."""
@@ -102,21 +80,13 @@ class PhysicsService:
             if hasattr(body, 'trail'):
                 body.trail.append(tuple(body.position))
 
-    def update(self):
-        """Update the simulation state based on elapsed time."""
-        if not self.is_running:
-            return
+    def update(self, delta_time):
+        """Update the simulation state based on elapsed time
+            from time management class."""
+        if delta_time > 0:
+            self.step(delta_time)
 
-        current_time = time.time()
-        if self.last_update is None:
-            self.last_update = current_time
-            return
-
-        delta_time = (current_time - self.last_update) * self.time_scale
-        self.last_update = current_time
-
-        self.step(delta_time)
-
-    def set_time_scale(self, scale):
-        """Set the time scale for the simulation."""
-        self.time_scale = max(0.0, scale)
+        # Update each body's internal state (e.g., rotation)
+        for body in self.bodies:
+            if hasattr(body, 'update'):
+                body.update(delta_time)

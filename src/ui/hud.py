@@ -15,7 +15,7 @@ class SimulationScreen:
         self.label = []
         self.button_list.append((50, 80, 140, 50)) # back button
         self.locked = 0
-        
+
         #the 3 button regions
         self.button_list.append((50, 10, 140, 50)) # time controls box (false button)
         self.button_list.append((50, 550, 570, 160)) # planet controls box (false button)
@@ -48,9 +48,16 @@ class SimulationScreen:
         self.label.append("[update mass speed here]") # current mass 1
         self.label.append("[update volume speed here]") # current volume 2
         self.label.append("[update density speed here]") # current density 3
-    
+
     #simple function to update the labels (used in engine, or gets values from engine and updates within hud)
     def update_label(self, text, i):
+        """Update label text at index i.
+         Inputs:
+            text: New text for the label
+            i: Index of the label to update
+        Outputs:
+            None
+        """
         self.label[i] = text
 
     """is (x,y) within button(bx,by,bw,bh)"""
@@ -103,10 +110,13 @@ class SimulationScreen:
 
                     if i == 16:
                         print("half")
+                        self.engine.time_manager.decrease_speed()
                     if i == 17:
                         print("start / pause")
+                        self.engine.time_manager.toggle_pause()
                     if i == 18:
                         print("double")
+                        self.engine.time_manager.increase_speed()
 
                     #the locks
                     if i == 25:
