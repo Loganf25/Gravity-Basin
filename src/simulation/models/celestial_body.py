@@ -2,14 +2,14 @@
 
 class CelestialBody:
     """Base class for celestial bodies in the simulation."""
-    def __init__(self, name, mass, radius, distance, color, texture):
+    def __init__(self, name, mass, radius, distance, color, texture, axial_tilt):
         self.name = name
         self.mass = mass
         self.radius = radius
         self.distance = distance
         self.color = color
         self.texture = texture
-
+        self.axial_tilt = axial_tilt
         # placeholder attributes for simulation (units scaled later by Engine)
         self.position = [distance, 0.0, 0.0]  # starting on X-axis
         self.velocity = [0.0, 0.0, 0.0]
