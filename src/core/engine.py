@@ -87,7 +87,7 @@ class Engine:
                 return
             for body in self.physics_service.bodies:
                 if body is not sun:
-                    self.orbit_service.compute_orbit(body, sun)
+                    self.orbit_service.compute_orbit(body, sun, AU_VISUAL_SCALE)
         else:
             # Create and register each planet using the Planet model
             for j in range(len(PLANET_DATA)):

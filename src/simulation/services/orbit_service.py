@@ -1,14 +1,14 @@
 """Module to handle the orbits of celestial bodies."""
 import math
 import numpy as np
-from simulation.services.physics_service import G
+from simulation.services.physics_service import G, AU_IN_METERS
 
 class OrbitService:
     """Service to manage and compute orbits of celestial bodies."""
     def __init__(self, physics_service):
         self.physics_service = physics_service
 
-    def compute_orbit(self, body1, body2):
+    def compute_orbit(self, body1, body2, AU_VISUAL_SCALE):
         """
         Compute the orbital parameters of body1 around body2.
         Inputs:
@@ -17,35 +17,32 @@ class OrbitService:
         Returns:
             A dictionary with orbital parameters such as distance and orbital velocity.
         """
-        dx = body2.position[0] - body1.position[0]
-        dy = body2.position[1] - body1.position[1]
-        dz = body2.position[2] - body1.position[2]
+        au_dist = body1.distance
+        eccen = body1.eccentricity
 
-        distance_in_meters = body1.distance * 1.496e11 # AU real distance in meters
-        visual_distance = math.sqrt(dx*dx + dy*dy + dz*dz)
-
-        if visual_distance == 0:
-            return None
-
-        # in case of same position objects, just return none
-        if distance_in_meters == 0:
+        #Handle either the sun or itself
+        if au_dist == 0:
             return None
         
-        # Compute orbital velocity
-        orbital_velocity = math.sqrt(G * body2.mass / distance_in_meters)
+        #Get perihelion distance to the star
+        peri_au = au_dist * (1 - eccen)
+        peri_meters = peri_au * AU_IN_METERS
 
-        # Direction vector from body1 to body2
-        direction = np.array([dx, dy, dz]) / visual_distance
+        #Put the body in its initial position
+        #The perilhelion point from its star
+        body1.position = [peri_au * AU_VISUAL_SCALE, 0.0, 0.0]
 
-        # Perpendicular vector for velocity direction (simple cross product with arbitrary vector)
-        arbitrary_vector = np.array([0.0, 1.0, 0.0])
-        velocity_direction = np.cross(direction, arbitrary_vector)
-        velocity_direction /= np.linalg.norm(velocity_direction)
+        #Calculate Velocity to push body around its sun
+        #Based on Visviva Equation at the closest point
+        #v = sqrt( (GM/a) * ((1+e)/(1-e)) )
 
-        # Set the velocity of body1 for a circular orbit
-        body1.velocity = (orbital_velocity * velocity_direction).tolist()
+        GM = G * body2.mass
+        a_meters = au_dist * AU_IN_METERS
+        
+        vel_mag = math.sqrt((GM/a_meters) * ((1 + eccen) / (1 - eccen)))
+        body1.velocity = [0.0, 0.0, vel_mag]
 
         return {
-            "distance": distance_in_meters,
-            "orbital_velocity": orbital_velocity
+            "distance": peri_meters,
+            "orbital_velocity": vel_mag
         }
