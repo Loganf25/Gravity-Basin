@@ -1,12 +1,12 @@
 """Module to handle the orbits of celestial bodies."""
 import math
-import numpy as np
 from simulation.services.physics_service import G, AU_IN_METERS
 
 class OrbitService:
     """Service to manage and compute orbits of celestial bodies."""
-    def __init__(self, physics_service):
-        self.physics_service = physics_service
+    def __init__(self):
+        pass
+
 
     def compute_orbit(self, body1, body2, AU_VISUAL_SCALE):
         """

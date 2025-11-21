@@ -1,8 +1,6 @@
 """Simulation HUD module for the Universe Simulator application."""
 import OpenGL.GL as gl
 import OpenGL.GLUT as glut
-from simulation.data.simulation_data import planet_textures, PLANET_DATA
-from simulation.services.physics_service import PhysicsService
 from core.states import States
 
 class SimulationScreen:

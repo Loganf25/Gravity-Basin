@@ -1,5 +1,4 @@
 """Time management for the simulation."""
-import pygame
 
 class TimeManager:
     """Manages time-related functionalities for the simulation."""
