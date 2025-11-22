@@ -3,4 +3,3 @@ pytest
 PyOpenGL
 pygame
 numpy
-math
