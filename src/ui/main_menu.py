@@ -4,7 +4,6 @@ import OpenGL.GLUT as glut
 from core.states import States
 
 class button:
-    "Button class"
     def __init__(self, bx, by,  bw, bh):
         self.bx = bx
         self.by = by
@@ -25,9 +24,8 @@ class MainMenu:
         by += 100
         self.button_list[States.EXIT] = button(bx, by, bw, bh) # quit button
 
-    #is (x,y) within button(bx,by,bw,bh)
+    """is (x,y) within button(bx,by,bw,bh)"""
     def within_bounds(self,x,y,button):
-        """need string"""
         if ((button.bx <= x <= button.bx + button.bw) and (button.by <= y <= button.by + button.bh)):
             return True
         return False
@@ -120,12 +118,29 @@ class MainMenu:
         gl.glEnd()
         gl.glColor3f(*current_color[:3])
 
+    def draw_text(self, text, x, y, r, g, b, align="left"): 
+
+        """Draw text at specified position with color and alignment.""" 
+        current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR) 
+        gl.glColor3f(r, g, b) 
+        width = sum(glut.glutBitmapWidth(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) for ch in text) 
+        if align == "center": 
+            x -= width / 2.0 
+        elif align == "right": 
+            x -= width 
+            
+        gl.glRasterPos2f(x, y) 
+
+        for ch in text: 
+            glut.glutBitmapCharacter(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) 
+            gl.glColor3f(*current_color[:3])
+
     def draw_text(self, text, x, y, r=1.0, g=1.0, b=1.0, align="left", scale=40):
 
         """scaled text"""
         if scale != 40:
 
-            #$Draw scalable text using GLUT stroke fonts.
+            """Draw scalable text using GLUT stroke fonts."""
             current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR)
             gl.glColor3f(r, g, b)
 
@@ -149,17 +164,17 @@ class MainMenu:
 
         
         else:
-            #non scaled text
-            #Draw text at specified position with color and alignment.
-            current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR)
-            gl.glColor3f(r, g, b)
+            """non scaled text"""
+            """Draw text at specified position with color and alignment.""" 
+            current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR) 
+            gl.glColor3f(r, g, b) 
             width = sum(glut.glutBitmapWidth(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) for ch in text) 
-            if align == "center":
-                x -= width / 2.0
-            elif align == "right":
-                x -= width
+            if align == "center": 
+                x -= width / 2.0 
+            elif align == "right": 
+                x -= width 
                 
-            gl.glRasterPos2f(x, y)
+            gl.glRasterPos2f(x, y) 
 
             for ch in text: 
                 glut.glutBitmapCharacter(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) 
@@ -189,18 +204,18 @@ class MainMenu:
 
 
         # draw credits
-        x = 200
+        x = 100
         y = 100
         self.draw_text("CREDITS", x, y, align="center", scale = 120); x,y = self.__update_xy(x,y)
         self.draw_text("TEAM LEAD", x,y); x,y = self.__update_xy(x,y)
         self.draw_text("----------", x,y); x,y = self.__update_xy(x,y)
-        self.draw_text("MILES GLOVER", x,y); x,y = self.__update_xy(x,y)
+        self.draw_text("MILES", x,y); x,y = self.__update_xy(x,y)
         self.draw_text("CODING", x,y); x,y = self.__update_xy(x,y, mult=2)
         self.draw_text("--------", x,y); x,y = self.__update_xy(x,y)
-        self.draw_text("LOGAN FLORA", x,y); x,y = self.__update_xy(x,y)
-        self.draw_text("CASSANDRA LEDER", x,y)
+        self.draw_text("CASSADNRA LEDER", x,y); x,y = self.__update_xy(x,y)
+        self.draw_text("LOGAN", x,y)
         
-        # restore previous GL state
+                # restore previous GL state
         gl.glEnable(gl.GL_DEPTH_TEST)
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glPopMatrix()
