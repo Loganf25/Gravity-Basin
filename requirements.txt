@@ -1,6 +1,6 @@
 #Dependencies for the Universe Simulator application
 pytest
-OpenGL
+PyOpenGL
 pygame
 numpy
 math
