@@ -16,12 +16,24 @@ class Planet(CelestialBody):
             radius=data["radius"],
             distance=data["distance_from_sun"],
             color=data["color"],
-            texture=data["texture"]
+            texture=data["texture"],
+            axial_tilt=data["axial_tilt"],
         )
+        # Additional planet-specific attributes
+        #Rotation period in hours to seconds
+        period_hours = data.get("rot_period", 24.0)
+        if period_hours != 0:
+            self.rotation_speed = 360.0 / (period_hours * 3600.0)  # degrees per second
+        else:
+            self.rotation_speed = 0.0
+
+        self.eccentricity=data["eccentricity"]
+
 
     def update(self, delta_time):
         """Update planet state"""
-        # placeholder for motion/orbit updates
+        # Apply rotation
+        self.tick_rotation(delta_time)
 
     def render(self):
         """Render the planet"""

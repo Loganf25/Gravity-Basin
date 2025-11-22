@@ -1,8 +1,6 @@
 """Simulation HUD module for the Universe Simulator application."""
 import OpenGL.GL as gl
 import OpenGL.GLUT as glut
-from simulation.data.simulation_data import planet_textures, PLANET_DATA
-from simulation.services.physics_service import PhysicsService
 from core.states import States
 
 class SimulationScreen:
@@ -12,37 +10,77 @@ class SimulationScreen:
 
         #all the buttons on the hud
         self.button_list = []
+        self.label = []
         self.button_list.append((50, 80, 140, 50)) # back button
+        self.locked = 0
 
-        #build the time controls buttons
-
-        #todo
-        self.button_list.append((50, 10, 140, 50)) #temp button (false button)
-        #build the planet controls buttons
-        #todo
-        self.button_list.append((50, 600, 920, 110)) #temp button (false button)
-        #build the object menu buttons
-        #todo
-        self.button_list.append((1000, 10, 260, 700)) #temp button (false button)
+        #the 3 button regions
+        self.button_list.append((50, 10, 140, 50)) # time controls box (false button)
+        self.button_list.append((50, 550, 570, 160)) # planet controls box (false button)
+        self.button_list.append((1000, 10, 260, 700)) # object menu box (false button)
 
         #building the planet adding buttons
-        for i in range(12):
-            if i % 2 == 0:
-                self.button_list.append((1000+20, 33+i*55, 100, 100))
-                self.button_list.append((1000+140, 33+i*55, 100, 100))
+        for index in range(12):
+            if index % 2 == 0:
+                self.button_list.append((1000+20, 33+index*55, 100, 100))
+                self.button_list.append((1000+140, 33+index*55, 100, 100))
 
-        # real time buttons
-        self.button_list.append((55, 15, 40, 40)) # half time speed
-        self.button_list.append((100, 15, 40, 40)) # pause / play time
-        self.button_list.append((145, 15, 40, 40)) # double time speed
+        # real time buttons (id 16-18)
+        self.button_list.append((55, 15, 40, 40)) # half time speed 16
+        self.button_list.append((100, 15, 40, 40)) # pause / play time 17
+        self.button_list.append((145, 15, 40, 40)) # double time speed 18
+
+        # planet info buttons (19-27)
+        self.button_list.append((60, 560, 40, 40)) # mass half 19
+        self.button_list.append((60, 610, 40, 40)) # volume half 20
+        self.button_list.append((60, 660, 40, 40)) # density half 21
+        self.button_list.append((110, 560, 40, 40)) # mass double 22
+        self.button_list.append((110, 610, 40, 40)) # volume double 23
+        self.button_list.append((110, 660, 40, 40)) # density double 24
+        self.button_list.append((160, 560, 40, 40)) # mass lock 25
+        self.button_list.append((160, 610, 40, 40)) # volume lock 26
+        self.button_list.append((160, 660, 40, 40)) # density lock 27
+
+        #labels (gets updated during runtime)
+        self.label.append("[update time speed here]") # current time speed 0
+        self.label.append("[update mass speed here]") # current mass 1
+        self.label.append("[update volume speed here]") # current volume 2
+        self.label.append("[update density speed here]") # current density 3
+
+    #simple function to update the labels (used in engine, or gets values from engine and updates within hud)
+    def update_label(self, text, i):
+
+        """Update label text at index i.
+         Inputs:
+            text: New text for the label
+            i: Index of the label to update
+        Outputs:
+            None
+        """
+        self.label[i] = text
 
     """is (x,y) within button(bx,by,bw,bh)"""
     def within_bounds(self,x,y,bx,by,bw,bh):
+        """Is x,y position withing rectangle bounds bx,by,bw,bh?
+
+            Inputs
+                x - x position
+                
+                y - y position
+                bx - box x position
+                by - box y position
+                bw - box width
+                bx - box height
+            Outputs
+                boolean True/False
+        """
         if bx <= x <= bx + bw and by <= y <= by + bh:
             return True
         return False
 
+    """function is the button input handler and activates specific functions for specific button id's hit"""
     def update(self, input_handler):
+
         """Update HUD state based on input."""
         if input_handler.quit_requested:
             self.engine.running = False
@@ -54,96 +92,171 @@ class SimulationScreen:
             x, y = input_handler.mouse_pos
 
             #for every button
-            for i in range(len(self.button_list)):
+            for button_index in range(len(self.button_list)):
 
-                bx, by, bw, bh = self.button_list[i]
+                bx, by, bw, bh = self.button_list[button_index]
 
                 #if mouse within some button
                 if self.within_bounds(x, y, bx, by, bw, bh):
 
-                    #back to menu button
-                    if i == 0:
-                        self.engine.change_state(States.MENU)
-
-                    # indexes are liable to change, ordering should be back,time,info,spawn
-
-                    #all three are debug buttons, they will still render but will actually be ignored
-                    #time controls buttons
-                    if i == 1:
-                        print("clicking time controls box")
-
-                    #planet controls buttons
-                    if i == 2:
-                        print("planet controls box")
-
-                    #object menu buttons
-                    if i == 3:
-                        pass
-                        #print("object menu box") halfway implemented
+                    match button_index:
+                        
+                        case 0:
+                            self.engine.change_state(States.MENU)   #menu button
+                        case 16:
+                            self.engine.time_manager.decrease_speed()   # /2 time button
+                        case 17:
+                            self.engine.time_manager.toggle_pause()     # play/pause time button
+                        case 18:
+                            self.engine.time_manager.increase_speed()   # *2 time button
+                        case 25:    #mass lock
+                            if self.locked == 1:
+                                self.locked = 0
+                            else:
+                                self.locked = 1                            
+                        case 26:    #volume lock
+                            if self.locked == 2:
+                                self.locked = 0
+                            else:
+                                self.locked = 2
+                        case 27:    #density lock
+                            if self.locked == 3:
+                                self.locked = 0
+                            else:
+                                self.locked = 3
                     
-                    if i > 3:
-                        self.engine.populate_scene(i-4)
+                        #planet info modifier buttons (unfinished, all commented functions are unimplemented and all passes temperary)
+                        case 19 | 20 | 21 | 22 | 23 | 24:
 
-                    if i == 16:
-                        print("half")
-                    if i == 17:
-                        print("start / pause")
-                    if i == 18:
-                        print("double")
+                            pass
 
-                    #time controls will have a few buttons (pause/play reverse, double speed, half speed)
-                    
-                    #planet controls (will either be entirely informational or allows for modifcation of 
-                    # planet attributes (mass,radius,volume) in a way reminacient of changing magnitudes 
-                    # (so will be doublings and halvings but no input boxes [too complex]))
+                            if button_index >= 19 and button_index <= 21:
+                                modifier = 0.5
+                            else:
+                                modifier = 2.0
+                            #planet = self.engine.selected_planet()
 
-                    #object menu 1 button for each planet
+                            #modifies the correct attribute of the planet depending on the button pressed
+                            match button_index:
+                                case 19 | 22:  #mass
+                                    if self.locked != 1:
+                                        #planet.set_mass(planet.get_mass() * modifier)
+                                        pass
+                                case 20 | 23:  #volume
+                                    if self.locked != 2:
+                                        #planet.set_volume(planet.get_volume() * modifier)
+                                        pass
+                                case 21 | 24:  #density
+                                    if self.locked != 3:
+                                        #planet.set_density(planet.get_density() * modifier)
+                                        pass
 
+                            #basically ensures that the other unlocked values get calculated
+                            #planet.recalculate(self.locked)
+
+                        #object adding buttons
+                        case _ if 4 <= button_index <= 15:
+                            self.engine.populate_scene(button_index - 4)   
+
+    """function draws visual hud graphics to screen (button visuals / text)"""
     def render(self):
+
         """Render the simulation HUD."""
         gl.glClearColor(0.0, 0.0, 0.1, 1)
         gl.glLoadIdentity()
 
         #draw each button in button list
-        for i in range(len(self.button_list)):
-            bx, by, bw, bh = self.button_list[i]
+        for button_index in range(len(self.button_list)):
+            bx, by, bw, bh = self.button_list[button_index]
 
-            if i == 0:
-                #place in back to menu button
-                self.draw_button(bx, by, bw, bh, 1,0,0)
-                self.draw_text("Return to Menu", bx + bw/2, by + bh/2 + 10, 0.0, 0.0, 0.0, align="center")
-            if i > 0:
-                #place in rects for each ui element zone, with white trim
+            if button_index > 0:
                 self.draw_trimmed_button(bx, by, bw, bh, 0, 0, 0, 1, 1, 1)
-                text = "-1"
-                if i > 0:
-                    text = "box"  + str(i)
-                if i == 16:
+
+            text = None
+            color = [1,1,1]
+            attribute_test = ["Mass","Volume","Density"]
+            
+            match button_index:
+                
+                #menu button
+                case 0:
+                    text = "Return to Menu"
+                    color = [0,0,0]
+                    self.draw_button(bx, by, bw, bh, 1, 0, 0)
+
+                # divider: /2
+                case 16 | 19 | 20 | 21:
                     text = "/2"
-                if i == 17:
+
+                # start/pause
+                case 17:
                     text = "s/p"
-                    self.draw_text("current time : [none gotten here yet]", bx + bw/2 + 85, by + bh/2 + 10, 1, 1, 1, align="left")
-                if i == 18:
+                    self.draw_text("current time : " + self.label[button_index-17],bx + bw/2 + 85, by + bh/2 + 10,1, 1, 1, align="left")
+
+                # multiplier: *2
+                case 18 | 22 | 23 | 24:
                     text = "*2"
 
-                if text != "-1":
-                    self.draw_text(text, bx + bw/2, by + bh/2 + 10, 1, 1, 1, align="center")
+                # lock buttons
+                case 25 | 26 | 27:
+                    # label
+                    self.draw_text("current "+attribute_test[button_index-25]+" : " + self.label[button_index-24],bx + bw/2 + 45, by + bh/2 + 10,1, 1, 1, align="left")
+
+                    # checkbox text
+                    lock_id = button_index - 24
+                    text = "[X]" if self.locked == lock_id else "[ ]"
+
+                case _:
+                    text = None
+
+            #actually draws the text defined in the match cases
+            if text:
+                self.draw_text(text,bx + bw/2,by + bh/2 + 10,color[0], color[1], color[2],align="center")
 
 
+    """draw a button with some trim to it"""
     def draw_trimmed_button(self, x, y, w, h, r, g, b, tr, tg, tb):
-        """draw a button with some trim to it"""
+        """
+            inputs
+                x,y - x,y horizontal/vertical displacement respecfully of the button with trim in pixels from top left corner of screen
+                w,h - width and height of rectangle in pixels
+                rgb - colors of rectangle in rgb format [0,1]
+                tr,tg,tb - trim's rgb values
+            output
+                Draw a colored rectangle with white text
+        """
+
         self.draw_button(x-1,y-1,w+2,h+2, tr,tg,tb) #colored trim
-        self.draw_button(x,y,w,h, r,g,b)    #main rect
+        self.draw_button(x,y,w,h, r,g,b)            #main rect
         
-    
+    """draw a button with text"""
     def draw_button_text(self, text, x, y, w, h, r, g, b):
-        """Draw a button with text."""
+
+        """
+            inputs
+                text - string input
+                x,y - x,y horizontal/vertical displacement respecfully of the button with text in pixels from top left corner of screen
+                w,h - width and height of rectangle in pixels
+                rgb - colors of rectangle in rgb format [0,1]
+            output
+                Draw a colored rectangle with white text
+        """
+
         self.draw_button(x,y,w,h, r,g,b)
         self.draw_text(text, x + w/2, y + h/2 + 10, 0,0,0, align="center")
 
-
+    """draw a rectangle on screen"""
     def draw_button(self, x, y, w, h, r, g, b):
-        """Draw a colored rectangle button."""
+
+        """
+            inputs
+                x,y - x,y horizontal/vertical displacement respecfully of the rectangle in pixels from top left corner of screen
+                w,h - width and height of rectangle in pixels
+                rgb - colors of rectangle in rgb format [0,1]
+            output
+                Draw a colored rectangle button.
+        """
+
         current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR)
         gl.glColor3f(r, g, b)
         gl.glBegin(gl.GL_QUADS)
@@ -154,7 +267,19 @@ class SimulationScreen:
         gl.glEnd()
         gl.glColor3f(*current_color[:3])
 
+    """draw text to screen"""
     def draw_text(self, text, x, y, r, g, b, align="left"):
+
+        """
+            inputs
+                text - string input
+                x,y - x,y horizontal/vertical displacement respecfully of the text in pixels from top left corner of screen
+                rgb - colors of text in rgb format [0,1]
+                align - "left" "center" "right" alignments for the text
+            output
+                Draw colored text.
+        """
+
         """Draw text at specified position with alignment."""
         current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR)
         gl.glColor3f(r, g, b)

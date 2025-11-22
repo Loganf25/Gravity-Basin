@@ -8,6 +8,7 @@ import OpenGL.GLUT as glut
 
 from core.states import States
 from core.input_handler import InputHandler
+from core.time_manager import TimeManager
 from core.selection_manager import SelectionManager
 from ui.main_menu import MainMenu
 from ui.hud import SimulationScreen
@@ -34,6 +35,7 @@ class Engine:
 
         self.clock = pygame.time.Clock()
         self.running = True
+        self.time_manager = TimeManager()
         self.input_handler = InputHandler()
         self.state = States.MENU 
 
@@ -58,7 +60,7 @@ class Engine:
         gl.glViewport(0, 0, 1280, 720)
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
-        glu.gluPerspective(60, 1280/720, 0.1, 1000.0)
+        glu.gluPerspective(60, 1280/720, 0.1, 10000.0) #Last vlaue is render distance
         gl.glMatrixMode(gl.GL_MODELVIEW)
         gl.glLoadIdentity()
         gl.glClearColor(0.0, 0.0, 0.0, 1.0)
@@ -85,7 +87,7 @@ class Engine:
                 return
             for body in self.physics_service.bodies:
                 if body is not sun:
-                    self.orbit_service.compute_orbit(body, sun)
+                    self.orbit_service.compute_orbit(body, sun, AU_VISUAL_SCALE)
         else:
             # Create and register each planet using the Planet model
             for j in range(len(PLANET_DATA)):
@@ -93,8 +95,6 @@ class Engine:
                 if planet is not None and j == i:
                     self.physics_service.register_body(planet)
                     print("manually spawned ",PLANET_DATA[j])
-
-
 
     def _create_planet(self, pdata):
         """Create a Planet instance from planet data and add visualization attrs.
@@ -138,7 +138,9 @@ class Engine:
         orbital_period_s = 2 * math.pi * math.sqrt(distance_m**3 / (G * sun_mass))
 
         # Convert orbital period seconds to number of simulation frames
-        sim_time_per_frame = (1 / 60.0) * self.physics_service.time_scale
+        sim_time_per_frame = self.time_manager.get_scale() * (1.0/60.0)  #assuming 60 FPS
+        if sim_time_per_frame == 0:
+            return 0  # avoid division by zero; no trail when paused
         frames_for_full_orbit = orbital_period_s / sim_time_per_frame
         return int(0.75 * frames_for_full_orbit)
 
@@ -197,10 +199,15 @@ class Engine:
                                             self.main_menu.render()))
         elif state == States.SIMULATION:
             self.handle_sim_input()
+            #Time management
+            d_real_sec = self.clock.get_time() / 1000.0  # get elapsed real time in seconds
+            d_sim_sec = self.time_manager.update(d_real_sec) # get simulation time to advance
+            self.physics_service.update(d_sim_sec) # update physics with simulation time step
+            self.sim_screen.update_label(self.time_manager.get_status_text(), 0)
+
             self.renderer.render(self.physics_service, self.camera)
             self.render_ui_overlay(lambda: (self.sim_screen.update(self.input_handler),
                                             self.sim_screen.render()))
-            self.physics_service.update()
         elif state == States.CREDITS:
             self.main_menu.draw_credits()
         elif state == States.EXIT:

@@ -13,7 +13,7 @@ class Camera:
         self.rotate_speed = 0.25
         self.zoom_factor = 1.1     # multiplicative zoom
         self.min_distance = 0.1    # optional small floor
-        self.max_distance = 10**30 # practically uncapped
+        self.max_distance = 3000 # right at the starfield for immersion
 
         self._last_mouse = None
 

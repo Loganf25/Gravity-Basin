@@ -2,9 +2,9 @@
 import OpenGL.GL as gl
 import OpenGL.GLUT as glut
 from core.states import States
-from graphics.texture_loader import TextureLoader
 
 class button:
+    "Button class"
     def __init__(self, bx, by,  bw, bh):
         self.bx = bx
         self.by = by
@@ -25,8 +25,9 @@ class MainMenu:
         by += 100
         self.button_list[States.EXIT] = button(bx, by, bw, bh) # quit button
 
-    """is (x,y) within button(bx,by,bw,bh)"""
+    #is (x,y) within button(bx,by,bw,bh)
     def within_bounds(self,x,y,button):
+        """need string"""
         if ((button.bx <= x <= button.bx + button.bw) and (button.by <= y <= button.by + button.bh)):
             return True
         return False
@@ -53,7 +54,8 @@ class MainMenu:
                     if button_key is States.SIMULATION:
                         self.engine.change_state(States.SIMULATION)
                     if button_key is States.CREDITS:
-                        self.engine.change_state(States.CREDITS)
+                        self.engine.change_state(States.CREDITS) # TODO: create credits screen
+                        print("sorry non functional right now, credits screen doesent exist yet")
                         break
                     if button_key is States.EXIT:
                         #self.exit program (whatever the proper function for this is)
@@ -118,29 +120,12 @@ class MainMenu:
         gl.glEnd()
         gl.glColor3f(*current_color[:3])
 
-    def draw_text(self, text, x, y, r, g, b, align="left"): 
-
-        """Draw text at specified position with color and alignment.""" 
-        current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR) 
-        gl.glColor3f(r, g, b) 
-        width = sum(glut.glutBitmapWidth(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) for ch in text) 
-        if align == "center": 
-            x -= width / 2.0 
-        elif align == "right": 
-            x -= width 
-            
-        gl.glRasterPos2f(x, y) 
-
-        for ch in text: 
-            glut.glutBitmapCharacter(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) 
-            gl.glColor3f(*current_color[:3])
-
     def draw_text(self, text, x, y, r=1.0, g=1.0, b=1.0, align="left", scale=40):
 
         """scaled text"""
         if scale != 40:
 
-            """Draw scalable text using GLUT stroke fonts."""
+            #$Draw scalable text using GLUT stroke fonts.
             current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR)
             gl.glColor3f(r, g, b)
 
@@ -164,29 +149,29 @@ class MainMenu:
 
         
         else:
-            """non scaled text"""
-            """Draw text at specified position with color and alignment.""" 
-            current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR) 
-            gl.glColor3f(r, g, b) 
+            #non scaled text
+            #Draw text at specified position with color and alignment.
+            current_color = gl.glGetFloatv(gl.GL_CURRENT_COLOR)
+            gl.glColor3f(r, g, b)
             width = sum(glut.glutBitmapWidth(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) for ch in text) 
-            if align == "center": 
-                x -= width / 2.0 
-            elif align == "right": 
-                x -= width 
+            if align == "center":
+                x -= width / 2.0
+            elif align == "right":
+                x -= width
                 
-            gl.glRasterPos2f(x, y) 
+            gl.glRasterPos2f(x, y)
 
             for ch in text: 
                 glut.glutBitmapCharacter(glut.GLUT_BITMAP_HELVETICA_18, ord(ch)) 
                 gl.glColor3f(*current_color[:3])
                 
                 
-    def __update_xy(self, y, mult = 1):
+    def __update_xy(self, x, y, mult = 1):
         PADDING = 50
-        update = (lambda y, padding: y+padding)
-        y = update(y, PADDING * mult)
+        update = (lambda xy, padding: xy+padding)
+        x,y = update(x, PADDING * mult), update(y, PADDING * mult)
         
-        return (y)
+        return (x,y)
 
     def draw_credits(self):
         # clear the previous frame
@@ -201,32 +186,19 @@ class MainMenu:
         gl.glMatrixMode(gl.GL_MODELVIEW)
         gl.glPushMatrix()
         gl.glLoadIdentity()
-        
-        tl = TextureLoader()
-        star_id = tl.load_texture("assets/images/stars.jpg")
 
-        gl.glEnable(gl.GL_TEXTURE_2D)
-        gl.glBindTexture(gl.GL_TEXTURE_2D, star_id)
-        # draw quad the size of the screen to make backgroud image
-        gl.glBegin(gl.GL_QUADS)
-        gl.glTexCoord2f(0, 0); gl.glVertex2f(0, 0)
-        gl.glTexCoord2f(1, 0); gl.glVertex2f(1280, 0)
-        gl.glTexCoord2f(1, 1); gl.glVertex2f(1280, 720)
-        gl.glTexCoord2f(0, 1); gl.glVertex2f(0, 720)
-        gl.glEnd()
-        gl.glDisable(gl.GL_TEXTURE_2D)
 
         # draw credits
-        x = 300
+        x = 200
         y = 100
-        self.draw_text("CREDITS", x, y, align="center", scale = 120); y = self.__update_xy(y)
-        self.draw_text("TEAM LEAD", x,y); y = self.__update_xy(y)
-        self.draw_text("----------", x,y); y = self.__update_xy(y)
-        self.draw_text("MILES", x,y); y = self.__update_xy(y, mult=2)
-        self.draw_text("CODING", x,y); y = self.__update_xy(y)
-        self.draw_text("--------", x,y); y = self.__update_xy(y)
-        self.draw_text("CASSANDRA LEDER", x,y); y = self.__update_xy(y)
-        self.draw_text("LOGAN", x,y)
+        self.draw_text("CREDITS", x, y, align="center", scale = 120); x,y = self.__update_xy(x,y)
+        self.draw_text("TEAM LEAD", x,y); x,y = self.__update_xy(x,y)
+        self.draw_text("----------", x,y); x,y = self.__update_xy(x,y)
+        self.draw_text("MILES GLOVER", x,y); x,y = self.__update_xy(x,y)
+        self.draw_text("CODING", x,y); x,y = self.__update_xy(x,y, mult=2)
+        self.draw_text("--------", x,y); x,y = self.__update_xy(x,y)
+        self.draw_text("LOGAN FLORA", x,y); x,y = self.__update_xy(x,y)
+        self.draw_text("CASSANDRA LEDER", x,y)
         
         # restore previous GL state
         gl.glEnable(gl.GL_DEPTH_TEST)
