@@ -5,7 +5,6 @@ import pygame
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
 import OpenGL.GLUT as glut
-
 from core.states import States
 from core.input_handler import InputHandler
 from core.time_manager import TimeManager
