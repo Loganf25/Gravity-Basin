@@ -6,7 +6,9 @@ import OpenGL.GLU as glu
 class SelectionManager:
     """Class to handle selection of objects in the scene."""
     def __init__(self):
+        self.current_body = None
         self.selected_body = None
+        
     def get_ray(self, mouse_x, mouse_y):
         """
         Pick an object based on mouse coordinates. 
@@ -77,5 +79,12 @@ class SelectionManager:
                     closest_body = body
             #Future improvement: else check for other object types here
 
-        self.selected_body = closest_body
+        self.current_body = closest_body
+
+        if self.current_body:
+            self.selected_body = self.current_body
+
         return closest_body
+    
+    def get_selected_body(self):
+        return self.selected_body

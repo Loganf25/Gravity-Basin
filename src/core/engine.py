@@ -75,13 +75,16 @@ class Engine:
         """
 
         if i == -1:
+
+            self.physics_service.clear_bodies() #clear every planet out incase of reset
+
             # Create and register each planet using the Planet model
             for pdata in PLANET_DATA:
                 planet = self._create_planet(pdata)
                 if planet is not None:
                     self.physics_service.register_body(planet)
 
-                            # After all bodies are registered, compute orbits using the Sun as center
+            # After all bodies are registered, compute orbits using the Sun as center
             sun = next((b for b in self.physics_service.bodies if getattr(b, "name", "").lower() == "sun"), None)
             if not sun:
                 return
@@ -127,6 +130,9 @@ class Engine:
             p.radius = max(0.5, base_radius)
 
         return p
+
+    def delete_selected_body(self):
+        self.physics_service.bodies.remove(self.selection_manager.get_selected_body())
 
     def _calculate_trail_length(self, pdata):
         """Calculate trail length (frames) based on orbital period and time scale."""
