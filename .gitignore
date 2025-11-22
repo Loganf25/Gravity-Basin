@@ -3,3 +3,7 @@
 
 !*.py
 !.gitignore
+
+#Ignore .pyc files in pycache files
+__pycache__/
+*.py[cod]

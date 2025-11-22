@@ -162,8 +162,9 @@ class SimulationScreen:
                                 case 21 | 24:
                                     attribute = 2
 
-                            #calculate the result of modifying that attribute
-                            planet.recalculate(self.locked, modifier, attribute)
+                            if planet is not None:
+                                #calculate the result of modifying that attribute
+                                planet.recalculate(self.locked, modifier, attribute)
 
                             #label update
                             self.recalculate_labels()
