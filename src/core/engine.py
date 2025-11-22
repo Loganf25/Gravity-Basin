@@ -132,7 +132,8 @@ class Engine:
         return p
 
     def delete_selected_body(self):
-        self.physics_service.bodies.remove(self.selection_manager.get_selected_body())
+        if self.selection_manager.get_selected_body() is not None:
+            self.physics_service.bodies.remove(self.selection_manager.get_selected_body())
 
     def _calculate_trail_length(self, pdata):
         """Calculate trail length (frames) based on orbital period and time scale."""
