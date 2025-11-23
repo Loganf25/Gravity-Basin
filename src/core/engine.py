@@ -41,7 +41,7 @@ class Engine:
 
         self.physics_service = PhysicsService()
         self.texture_loader = TextureLoader()
-        self.orbit_service = OrbitService(self.physics_service)
+        self.orbit_service = OrbitService()
         self.renderer = Renderer(self.texture_loader)
 
         self.camera = Camera()  # dynamic camera instance
@@ -209,7 +209,7 @@ class Engine:
             self.render_ui_overlay(lambda: (self.sim_screen.update(self.input_handler),
                                             self.sim_screen.render()))
         elif state == States.CREDITS:
-            self.main_menu.draw_credits()
+            self.render_ui_overlay(lambda: (self.main_menu.draw_credits()))
         elif state == States.EXIT:
             self.exit()
         elif state == States.PAUSE:
