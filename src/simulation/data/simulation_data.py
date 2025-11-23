@@ -14,6 +14,7 @@ PLANET_DATA = [
     {"name": "Pluto",   "mass": 1.303e22,  "radius": 0.0008,  "distance_from_sun": 39.48, "texture": "pluto.jpg",    "color": (0.8, 0.8, 0.7), "axial_tilt": 119.6, "rot_period": 153.3, "eccentricity": 0.244} #Retrograde
 ]
 
+
 planet_textures = {
     "sun": "assets/images/sun.jpg",
     "mercury": "assets/images/mercury.jpg",
