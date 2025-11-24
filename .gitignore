@@ -3,6 +3,7 @@
 
 !*.py
 !.gitignore
+!*.jpg
 
 #Ignore .pyc files in pycache files
 __pycache__/
