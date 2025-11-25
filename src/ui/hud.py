@@ -199,8 +199,8 @@ class SimulationScreen:
             attribute_test = ["Mass","Volume","Density"]
             
             planet_names = []
-            for planet in self.engine.physics_service.bodies:
-                planet_names.append(planet.get_name())
+            for planet in PLANET_DATA:
+                planet_names.append(planet["name"])
 
             #defining custom colors for buttons
             match button_index:

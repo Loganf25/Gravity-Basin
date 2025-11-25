@@ -5,6 +5,8 @@ import pygame
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
 import OpenGL.GLUT as glut
+import os
+import random
 from core.states import States
 from core.input_handler import InputHandler
 from core.time_manager import TimeManager
@@ -28,6 +30,9 @@ class Engine:
     """Core engine to run the Universe Simulator application."""
     def __init__(self):
         pygame.init()
+        file_path = os.path.join(os.path.dirname(os.path.abspath(__file__).removesuffix("\src\core\engine.py")),"Gravity-Basin", "assets", "images", "mini_earth_icon.png")
+        icon = pygame.image.load(file_path)
+        pygame.display.set_icon(icon)
         pygame.display.set_mode((1280, 720), pygame.OPENGL | pygame.DOUBLEBUF)
         glut.glutInit()
         pygame.display.set_caption("Universe Simulator")
@@ -79,7 +84,7 @@ class Engine:
 
             # Create and register each planet using the Planet model
             for pdata in PLANET_DATA:
-                planet = self._create_planet(pdata)
+                planet = self._create_planet(pdata,"default")
                 if planet is not None:
                     self.physics_service.register_body(planet)
 
@@ -93,12 +98,12 @@ class Engine:
         else:
             # Create and register each planet using the Planet model
             for j in range(len(PLANET_DATA)):
-                planet = self._create_planet(PLANET_DATA[j])
+                planet = self._create_planet(PLANET_DATA[j],"new")
                 if planet is not None and j == i:
                     self.physics_service.register_body(planet)
                     print("manually spawned ",PLANET_DATA[j])
 
-    def _create_planet(self, pdata):
+    def _create_planet(self, pdata, type):
         """Create a Planet instance from planet data and add visualization attrs.
 
         Returns Planet instance or None on failure.
@@ -118,7 +123,25 @@ class Engine:
             p.trail = deque(maxlen=0)
 
         # Position (visual units)
-        p.position = [pdata["distance_from_sun"], 0.0, 0.0]
+        if type == "default":
+            p.position = [pdata["distance_from_sun"], 0.0, 0.0]
+        else: # spawned planets have random positions/velocities
+            default_dfs = pdata["distance_from_sun"]
+            random_mag = (random.random()*4)+0.5
+            default_dfs = default_dfs * random_mag
+
+            three_random_weights = [random.uniform(-1, 1),random.uniform(-1, 1),random.uniform(-1, 1)]
+            x, y, z = three_random_weights
+            mag = math.sqrt(x*x + y*y + z*z)
+            if mag == 0:
+                mag = 1
+            normalized_weights = [x/mag, y/mag, z/mag]
+            
+            p.position = [default_dfs * normalized_weights[0],default_dfs * normalized_weights[1],default_dfs * normalized_weights[2]]
+            p.velocity.clear()
+            for pos in p.position:
+                p.velocity.append(pos*10000*(random.random()-0.5))
+
         p.initial_position = list(p.position)
 
         return p

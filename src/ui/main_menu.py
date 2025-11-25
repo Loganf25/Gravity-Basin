@@ -1,6 +1,7 @@
 """Main menu UI module for the Universe Simulator application."""
 import OpenGL.GL as gl
 import OpenGL.GLUT as glut
+import os
 from core.states import States
 from graphics.texture_loader import TextureLoader
 import pygame
@@ -73,6 +74,7 @@ class MainMenu:
     def render(self):
         """Render the main menu."""
         # clear the previous frame
+        gl.glClearColor(0.0, 0.0, 0.0, 1.0)
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
         gl.glLoadIdentity()
 
@@ -88,6 +90,8 @@ class MainMenu:
         # disable depth test so buttons draw on top
         gl.glDisable(gl.GL_DEPTH_TEST)
         gl.glDisable(gl.GL_LIGHTING)
+
+        gl
 
         # draw the title
         self.draw_text("Universe Simulator", 400, 200, 1.0, 1.0, 1.0, align="center", scale = 120)
@@ -107,6 +111,10 @@ class MainMenu:
             if button_key is States.EXIT:
                 self.draw_button(button_obj, 1,0,0)
                 self.draw_text("Exit", x, y, 0.0, 0.0, 0.0, align="center")
+
+        #draw the image
+        file_path = os.path.join(os.path.dirname(os.path.abspath(__file__).removesuffix(r"\src\ui\main_menu.py")),"Gravity-Basin", "assets", "images", "main_menu_system.png")
+        self.draw_image(file_path, 600, 200, 500, 500)
 
         # restore previous GL state
         gl.glEnable(gl.GL_DEPTH_TEST)
@@ -246,3 +254,39 @@ class MainMenu:
         gl.glPopMatrix()
         gl.glMatrixMode(gl.GL_MODELVIEW)
         gl.glPopMatrix()
+
+    def draw_image(self, file_path, x, y, width, height):
+        """Draw an image as a textured quad at (x, y) with given size."""
+
+        # load Pygame surface
+        surface = pygame.image.load(file_path)
+        surface = pygame.transform.flip(surface, False, True)
+
+        image_format = gl.GL_RGBA if surface.get_bytesize() == 4 else gl.GL_RGB
+        image_data = pygame.image.tostring(surface, "RGBA", True)
+        w, h = surface.get_size()
+
+        # generate OpenGL texture
+        tex = gl.glGenTextures(1)
+        gl.glBindTexture(gl.GL_TEXTURE_2D, tex)
+
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR)
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR)
+
+        gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA,w, h, 0, gl.GL_RGBA,gl.GL_UNSIGNED_BYTE, image_data)
+
+        # ---- draw quad ----
+        gl.glEnable(gl.GL_TEXTURE_2D)
+        gl.glBindTexture(gl.GL_TEXTURE_2D, tex)
+
+        gl.glBegin(gl.GL_QUADS)
+        gl.glTexCoord2f(0, 0); gl.glVertex2f(x,         y)
+        gl.glTexCoord2f(1, 0); gl.glVertex2f(x+width,  y)
+        gl.glTexCoord2f(1, 1); gl.glVertex2f(x+width,  y+height)
+        gl.glTexCoord2f(0, 1); gl.glVertex2f(x,         y+height)
+        gl.glEnd()
+
+        # ---- cleanup ----
+        gl.glDisable(gl.GL_TEXTURE_2D)
+        gl.glBindTexture(gl.GL_TEXTURE_2D, 0)
+        gl.glDeleteTextures([tex])
