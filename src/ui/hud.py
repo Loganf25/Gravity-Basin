@@ -20,13 +20,15 @@ class SimulationScreen:
         #the 3 button regions
         self.button_list.append((50, 10, 140, 50)) # time controls box (false button) 1 
         self.button_list.append((50, 500, 570, 210)) # planet info box (false button) 2
-        self.button_list.append((1000, 10, 260, 700)) # object menu box (false button) 3
+        self.button_list.append((1000, 10, 260, 590)) # object menu box (false button) 3
 
         #building the planet adding buttons
-        for index in range(12):
+        for index in range(10):
             if index % 2 == 0:
                 self.button_list.append((1000+20, 33+index*55, 100, 100))
                 self.button_list.append((1000+140, 33+index*55, 100, 100))
+        self.button_list.append((0,0,0,0)) #dummy buttons to maintain indexing after removing planets
+        self.button_list.append((0,0,0,0))
 
         # real time buttons (id 16-18)
         self.button_list.append((55, 15, 40, 40)) # half time speed 16
@@ -196,6 +198,10 @@ class SimulationScreen:
             trim_color = [1,1,1]
             attribute_test = ["Mass","Volume","Density"]
             
+            planet_names = []
+            for planet in self.engine.physics_service.bodies:
+                planet_names.append(planet.get_name())
+
             #defining custom colors for buttons
             match button_index:
                 case 0:
@@ -209,12 +215,14 @@ class SimulationScreen:
 
             self.draw_trimmed_button(bx, by, bw, bh, button_color[0], button_color[1], button_color[2], trim_color[0], trim_color[1], trim_color[2])
 
-
             match button_index:
                 
                 #menu button
                 case 0:
                     text = "Return to Menu"
+
+                case 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13:
+                    text = planet_names[button_index-4]
 
                 # divider: /2
                 case 16 | 19 | 20 | 21:

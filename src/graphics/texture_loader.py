@@ -11,6 +11,11 @@ class TextureLoader:
         self.textures_loaded = False
 
     def load_texture(self, file_path):
+
+        #get relative path and graft it onto abosolute path to create a robust pathing
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        file_path = os.path.join(base_dir, file_path)
+
         """Load a texture from file and return its OpenGL texture ID"""
         if file_path in self.textures:
             return self.textures[file_path]

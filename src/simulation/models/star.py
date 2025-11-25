@@ -6,7 +6,9 @@ from simulation.models.celestial_body import CelestialBody
 class Star(CelestialBody):
     """Class representing a star in the simulation, extending CelestialBody."""
     def __init__(self, name="Sun"):
+
         data = get_planet_data(name)
+
         if data is None:
             raise ValueError("Star data not found for: " + str(name))
 

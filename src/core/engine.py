@@ -40,7 +40,7 @@ class Engine:
 
         self.physics_service = PhysicsService()
         self.texture_loader = TextureLoader()
-        self.orbit_service = OrbitService()
+        self.orbit_service = OrbitService(self.physics_service)
         self.renderer = Renderer(self.texture_loader)
 
         self.camera = Camera()  # dynamic camera instance
@@ -118,20 +118,13 @@ class Engine:
             p.trail = deque(maxlen=0)
 
         # Position (visual units)
-        p.position = [pdata["distance_from_sun"] * AU_VISUAL_SCALE, 0.0, 0.0]
+        p.position = [pdata["distance_from_sun"], 0.0, 0.0]
         p.initial_position = list(p.position)
-
-        # Visual radius scaling (keeps original radius value on model untouched)
-        base_radius = pdata.get("radius", 1.0) * RADIUS_VISUAL_SCALE
-        if pdata["name"].lower() == "sun":
-            p.radius = max(1.0, base_radius * 20.0)
-        else:
-            p.radius = max(0.5, base_radius)
 
         return p
 
     def delete_selected_body(self):
-        if self.selection_manager.get_selected_body() is not None:
+        if self.selection_manager.get_selected_body() is not None and self.physics_service.bodies.__contains__(self.selection_manager.get_selected_body()):
             self.physics_service.bodies.remove(self.selection_manager.get_selected_body())
 
     def _calculate_trail_length(self, pdata):
