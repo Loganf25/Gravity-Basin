@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sun Nov  9 10:51:25 2025
-
-@author: cassa
-"""
-
+"""Simple class for storing preset states"""
 from enum import Enum
 
 class States(Enum):
