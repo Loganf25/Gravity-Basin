@@ -1,56 +1,56 @@
 Gravity-Basin/
-    ├── assets/
-    │   └── images/
-    │       ├── earth.jpg
-    │       ├── jupiter.jpg
-    │       ├── main_menu_system.png
-    │       ├── mars.jpg
-    │       ├── mercury.jpg
-    │       ├── mini_earth_icon.png
-    │       ├── neptune.jpg
-    │       ├── pluto.jpg
-    │       ├── saturn.jpg
-    │       ├── stars.jpg
-    │       ├── sun.jpg
-    │       ├── uranus.jpg
-    │       └── venus.jpg
-    |
-    ├── src/
-    │   ├── core/
-    │   │   ├── engine.py
-    │   │   ├── input_handler.py
-    │   │   ├── selection_manager.py
-    │   │   ├── states.py
-    │   │   └── time_manager.py
-    │   │
-    │   ├── graphics/
-    │   │   ├── camera.py
-    │   │   ├── renderer.py
-    │   │   └── texture_loader.py
-    │   │
-    │   ├── simulation/
-    │   │   ├── data/
-    │   │   │   └── simulation_data.py
-    │   │   │
-    │   │   ├── model/
-    │   │   │   ├── celestial_body.py
-    │   │   │   ├── planet.py
-    │   │   │   └── star.py
-    │   │   │
-    │   │   └── services/
-    │   │       ├── orbit_service.py
-    │   │       └── physics_service.py
-    │   │
-    │   ├── ui/
-    │   │   ├── hud.py
-    │   │   └── main_menu.py
-    │   │
-    │   └── main.py
-    │
-    ├── Legacy Versions/
-    │   ├── legacy_model.py
-    │   └── mockup.py
-    │
-    ├── ARCHITECTURE.md
-    ├── README.md
-    └── requirements.txt
+-    ├── assets/
+-    │   └── images/
+-    │       ├── earth.jpg
+-    │       ├── jupiter.jpg
+-    │       ├── main_menu_system.png
+-    │       ├── mars.jpg
+-    │       ├── mercury.jpg
+-    │       ├── mini_earth_icon.png
+-    │       ├── neptune.jpg
+-    │       ├── pluto.jpg
+-    │       ├── saturn.jpg
+-    │       ├── stars.jpg
+-    │       ├── sun.jpg
+-    │       ├── uranus.jpg
+-    │       └── venus.jpg
+-    |
+-    ├── src/
+-    │   ├── core/
+-    │   │   ├── engine.py
+-    │   │   ├── input_handler.py
+-    │   │   ├── selection_manager.py
+-    │   │   ├── states.py
+-    │   │   └── time_manager.py
+-    │   │
+-    │   ├── graphics/
+-    │   │   ├── camera.py
+-    │   │   ├── renderer.py
+-    │   │   └── texture_loader.py
+-    │   │
+-    │   ├── simulation/
+-    │   │   ├── data/
+-    │   │   │   └── simulation_data.py
+-    │   │   │
+-    │   │   ├── model/
+-    │   │   │   ├── celestial_body.py
+-    │   │   │   ├── planet.py
+-    │   │   │   └── star.py
+-    │   │   │
+-    │   │   └── services/
+-    │   │       ├── orbit_service.py
+-    │   │       └── physics_service.py
+-    │   │
+-    │   ├── ui/
+-    │   │   ├── hud.py
+-    │   │   └── main_menu.py
+-    │   │
+-    │   └── main.py
+-    │
+-    ├── Legacy Versions/
+-    │   ├── legacy_model.py
+-    │   └── mockup.py
+-    │
+-    ├── ARCHITECTURE.md
+-    ├── README.md
+-    └── requirements.txt
