@@ -24,7 +24,7 @@ class TextureLoader:
             raise FileNotFoundError(f"Texture not found: {file_path}")
 
         surface = pygame.image.load(file_path)
-        surface = pygame.transform.flip(surface, False, True)
+        surface = pygame.transform.flip(surface, True, True)
 
         image_format = "RGBA" if surface.get_bytesize() == 4 else "RGB"
         image_data = pygame.image.tostring(surface, image_format, True)
