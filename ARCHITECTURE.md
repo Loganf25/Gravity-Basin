@@ -14,7 +14,7 @@ Gravity-Basin/
 -    │       ├── sun.jpg
 -    │       ├── uranus.jpg
 -    │       └── venus.jpg
--    |
+-    │
 -    ├── src/
 -    │   ├── core/
 -    │   │   ├── engine.py
@@ -51,6 +51,32 @@ Gravity-Basin/
 -    │   ├── legacy_model.py
 -    │   └── mockup.py
 -    │
+-	 ├── Tests/
+-	 │	 ├── component_tests/
+-	 │		 └── comp_tests.py
+-	 │	 ├── unit_tests/
+-	 │	 │	 ├── core_tests/
+-	 │	 │		 ├── test_engine.py
+-	 │	 │		 ├── test_input_handler.py
+-	 │	 │		 ├── test_selection_manager.py
+-	 │	 │		 └── test_time_manager.py
+-	 │	 │	 ├── graphics_tests/
+-	 │	 │		 ├── test_camera.py
+-	 │	 │		 ├── test_renderer.py
+-	 │	 │		 └── test_texture_loader.py
+-	 │	 │	 ├── simulation_tests/
+-	 │	 │		├── test_celestial_body.py
+-	 │	 │		├── test_orbit_service.py
+-	 │	 │		├── test_physics_service.py
+-	 │	 │		├── test_planet.py
+-	 │	 │		└── test_simulation_data.py
+-	 │	 │	 ├── ui_tests/
+-	 │	 │		 ├── test_hud.py
+-	 │	 │		 └── test_main_menu.py
+-	 │	 │	 └── unit_tests.py
+-	 │	 ├── conftest.py
+-	 │	 └── system_test.py
+-	 │	
 -    ├── ARCHITECTURE.md
 -    ├── README.md
 -    └── requirements.txt

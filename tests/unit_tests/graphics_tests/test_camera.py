@@ -35,4 +35,4 @@ class TestCamera:
         assert camera.elevation == pytest.approx(22)
 
     def runUnitTests(self):
-        self.test_handle_input()
+        self.test_handle_input(self.camera())

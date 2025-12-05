@@ -14,8 +14,11 @@ class TestRenderer:
     def renderer(self):
         "Creates body to use in tests"
         return Renderer(TextureLoader())
+    def testRender(self, renderer):
+        renderer.initalize_textures(PLANET_DATA)
+        assert renderer.initalized == True
 
     def runUnitTests(self):
-        #
+        self.testRenderer(self.renderer())
 
 
