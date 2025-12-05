@@ -262,7 +262,6 @@ class Engine:
         if new_state in States: # check to see if new state is member of enum
             self.state_switch(new_state)
         else: # failed type-check
-            # TODO: add logging
             print("Error! Invalid state: " + new_state)    
         
         self.state = new_state
