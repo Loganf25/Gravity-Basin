@@ -23,4 +23,5 @@ class TestTimeManager:
         assert time_manager.base_time_scale == 3e6
         assert time_manager.time_multiplier == 1.0
 
-    
+    def runUnitTests(self):
+        self.test_initial_state()

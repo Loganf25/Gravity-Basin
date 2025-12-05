@@ -15,6 +15,7 @@ class TestRenderer:
         "Creates body to use in tests"
         return Renderer(TextureLoader())
 
-
+    def runUnitTests(self):
+        #
 
 

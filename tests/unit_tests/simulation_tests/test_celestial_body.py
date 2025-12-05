@@ -54,3 +54,9 @@ class TestCelestialBody:
         delta_time = 1.0 #Adds 5 degress tro rotation_angle
         celestial_body.tick_rotation(delta_time)
         assert celestial_body.rotation_angle == pytest.approx(4.0)
+        
+    def runUnitTests(self):
+        self.test_init()
+        self.test_update()
+        self.test_tick_rotation()
+        self.test_tick_rotation_end_rotation()

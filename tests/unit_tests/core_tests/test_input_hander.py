@@ -9,3 +9,6 @@ class testInputHandler:
     def test_input_handler(self):
         self.input_handler.process_events()
         assert self.input_handler.last_mouse_pos != None
+        
+    def runUnitTests(self):
+        self.test_input_handler()

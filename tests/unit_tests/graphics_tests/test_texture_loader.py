@@ -9,3 +9,6 @@ class TestTextureLoader:
         
     def testInitTextures(self):
         self.texture_loader.initialize_textures(None) # should result in FileNotFoundError and IOError
+        
+    def runUnitTests(self):
+        self.testInitTextures()

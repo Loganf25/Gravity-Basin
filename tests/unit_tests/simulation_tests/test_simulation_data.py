@@ -26,3 +26,8 @@ class TestSimulationData:
         assert mercury_data_upper is not None
         assert mercury_data_lower["name"] == "Mercury"
         assert mercury_data_upper["name"] == "Mercury"
+
+    def runUnitTests(self):
+        self.test_get_planet_data_valid()
+        self.test_get_planet_data_invalid()
+        self.test_get_planet_data_case_insensitivity()

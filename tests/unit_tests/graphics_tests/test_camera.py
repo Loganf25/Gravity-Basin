@@ -33,3 +33,6 @@ class TestCamera:
         camera.handle_input(input_handler)
         assert camera.azimuth == pytest.approx(12)
         assert camera.elevation == pytest.approx(22)
+
+    def runUnitTests(self):
+        self.test_handle_input()

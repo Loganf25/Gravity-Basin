@@ -38,4 +38,15 @@ class testSimulationScreen:
         self.hud.draw_button(x=50,y=50,w=200,h=200, r=0,g=0,b=0)
     def testDrawText(self):
         self.hud.draw_text("Test", x=50, y=50, r=0, g=0, b=0)
-   
+        
+    def runUnitTests(self):
+        self.testInit()
+        self.testUpdateLabel()
+        self.testRecalculateLabel()
+        self.testWithinBounds()
+        self.testUpdate()
+        self.testRenderer()
+        self.testDrawTrimmedButton()
+        self.testDrawButtonText()
+        self.testDrawButton()
+        self.testDrawText()

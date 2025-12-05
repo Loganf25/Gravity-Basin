@@ -48,3 +48,9 @@ class TestPhysicsService:
         physics_service.register_body(body1)
         physics_service.clear_bodies()
         assert len(physics_service.bodies) == 0
+
+    def runUnitTests(self):
+        self.test_compute_gravitational_force(self.physics_service)
+        self.test_step(self.physics_service)
+        self.test_register_body(self.physics_service)
+        self.test_clear_bodies(self.physics_service)

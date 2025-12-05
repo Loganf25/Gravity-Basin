@@ -31,3 +31,7 @@ class TestPlanet:
         planet.update(delta_time)
         expected_angle = (initial_angle + planet.rotation_speed * delta_time) % 360.0
         assert planet.rotation_angle == pytest.approx(expected_angle)
+
+    def runUnitTests(self):
+        self.test_init(self.planet())
+        self.test_update(self.planet())

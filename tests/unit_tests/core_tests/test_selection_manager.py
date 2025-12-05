@@ -8,3 +8,6 @@ class test_selection_manager:
     @pytest.fixture
     def test_selection_manager(self):
         assert self.selection_manager.get_selected_body() == None
+        
+    def runUnitTests(self):
+        self.test_selection_manager()

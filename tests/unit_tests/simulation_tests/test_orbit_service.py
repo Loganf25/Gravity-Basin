@@ -24,5 +24,6 @@ class TestOrbitService:
         assert orbit_params["distance"] > 0
         assert orbit_params["orbital_velocity"] > 0
 
-
+    def runUnitTests(self):
+        self.test_compute_orbit(self.orbit_service())
 

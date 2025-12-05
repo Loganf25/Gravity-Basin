@@ -24,3 +24,13 @@ class EngineTest:
         self.engine.run()
     def testExit(self):
         self.engine.exit()
+        
+    def runUnitTests(self):
+        self.testSetupGL()
+        self.testPopulateScene()
+        self.testDeleteSelectedBody()
+        self.testRenderUIOverlay()
+        self.testHandleSimInput()
+        self.testInitializeSimulation()
+        self.testRun()
+        self.testExit()

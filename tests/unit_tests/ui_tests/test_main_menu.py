@@ -31,4 +31,13 @@ class TestMainMenu():
         self.main_menu.draw_credits()
     def testDrawImage(self):
         self.main_menu.draw_image("assests/Earth.png", x=50, y=50, width=200, height=200)
-                
+    
+    def runUnitTests(self):
+        self.testInit()
+        self.testWithinBounds()
+        self.testUpdate()
+        self.testRender()
+        self.testDrawButton()
+        self.testDrawText()
+        self.testDrawCredits()
+        self.testDrawImage()
