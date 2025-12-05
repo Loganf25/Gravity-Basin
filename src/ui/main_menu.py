@@ -23,8 +23,6 @@ class MainMenu:
         bx, by, bw, bh = 50, 300, 200, 80
         self.button_list[States.SIMULATION] = button(bx, by, bw, bh) # simulation button
         by += 100
-        self.button_list[States.CREDITS] = button(bx, by, bw, bh) # credits button
-        by += 100
         self.button_list[States.EXIT] = button(bx, by, bw, bh) # quit button
 
     """is (x,y) within button(bx,by,bw,bh)"""
