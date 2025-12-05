@@ -1,5 +1,7 @@
-#Dependencies for the Universe Simulator application
+#Dependencies for the Universe Simulator application (for the non .exe version)
+python
 pytest
 PyOpenGL
 pygame
 numpy
+pyinstaller

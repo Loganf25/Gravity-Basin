@@ -20,7 +20,6 @@ from simulation.services.orbit_service import OrbitService
 from simulation.services.physics_service import PhysicsService, G, AU_IN_METERS
 from simulation.data.simulation_data import planet_textures, PLANET_DATA
 from simulation.models.planet import Planet
-#from simulation.models.star import Star
 
 
 AU_VISUAL_SCALE = 8.0
@@ -37,19 +36,22 @@ class Engine:
         glut.glutInit()
         pygame.display.set_caption("Universe Simulator")
 
+        # time/input services
         self.clock = pygame.time.Clock()
         self.running = True
         self.time_manager = TimeManager()
         self.input_handler = InputHandler()
         self.state = States.MENU 
 
+        # orbit/rendering services
         self.physics_service = PhysicsService()
         self.texture_loader = TextureLoader()
         self.orbit_service = OrbitService(self.physics_service)
         self.renderer = Renderer(self.texture_loader)
 
-        self.camera = Camera()  # dynamic camera instance
+        self.camera = Camera()
 
+        # texture/screen selection services
         self.textures_initialized = False
         self.selection_manager = SelectionManager()
         self.main_menu = MainMenu(self)
@@ -101,7 +103,6 @@ class Engine:
                 planet = self._create_planet(PLANET_DATA[j],"new")
                 if planet is not None and j == i:
                     self.physics_service.register_body(planet)
-                    print("manually spawned ",PLANET_DATA[j])
 
     def _create_planet(self, pdata, type):
         """Create a Planet instance from planet data and add visualization attrs.
@@ -127,6 +128,10 @@ class Engine:
             p.position = [pdata["distance_from_sun"], 0.0, 0.0]
         else: # spawned planets have random positions/velocities
             default_dfs = pdata["distance_from_sun"]
+
+            if default_dfs<0.1:
+                default_dfs = 2 #makes the sun at least a little bit distant
+
             random_mag = (random.random()*4)+0.5
             default_dfs = default_dfs * random_mag
 
@@ -201,7 +206,6 @@ class Engine:
     def initialize_simulation(self):
         """Initializes textures and populates the scene."""
         if not self.textures_initialized:
-            print("Initializing planet textures...")
             
             # only load textures if no texture loading exception occurs
             self.texture_loader.initialize_textures(planet_textures)
@@ -209,7 +213,6 @@ class Engine:
                 self.renderer.initialize_textures(planet_textures)
                 self.populate_scene()
                 self.textures_initialized = True
-                print("Textures and scene populated successfully.")
             else:
                 print("Textures failed to load.")
                 self.running = False
