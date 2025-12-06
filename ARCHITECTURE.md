@@ -45,6 +45,10 @@ Gravity-Basin/
 -    │   │   ├── hud.py
 -    │   │   └── main_menu.py
 -    │   │
+-	 │   │
+-	 │	 ├── dist/
+-	 │   │	 └── main.exe
+-	 │	 │
 -    │   └── main.py
 -    │
 -    ├── Legacy Versions/
