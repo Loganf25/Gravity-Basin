@@ -17,5 +17,5 @@ paste the file path into your Command Line and press enter, it should start runn
 Executable Run method (should not require any dependencies for this one)[unstable]:
 ```bash
 Download this github repo into a designated folder: https://github.com/Loganf25/Gravity-Basin.git
-go to your_folder/Gravity-Basin/src/ and find the only .exe file and run it
+go to your_folder/Gravity-Basin/src/dist and find the only .exe file and run it
 ```
